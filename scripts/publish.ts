@@ -291,15 +291,27 @@ if (shouldBuild) {
 
   console.log('\n🏗️  Building production frontend...');
   await $`bun run build`.cwd(outputDir);
+
+  // Make the publish root directly serveable (e.g. `http-server .`) by
+  // promoting built artifacts from dist/ to the output root.
+  const distDir = path.join(outputDir, 'dist');
+  if (existsSync(distDir)) {
+    copyDir(distDir, outputDir);
+  }
 }
 
 console.log(`✅ Standalone frontend created at ${outputDir}`);
 if (shouldBuild) {
-  console.log(`✅ Production build ready at ${path.join(outputDir, 'dist')}`);
+  console.log(`✅ Production build ready at ${outputDir}`);
+  console.log(`   (dist files are also available at ${path.join(outputDir, 'dist')})`);
 }
 console.log('Next steps:');
 console.log(`  1) cd ${outputDir}`);
-console.log('  2) Update public/game-studio-config.js with your mainnet contract ID');
+if (shouldBuild) {
+  console.log('  2) Update game-studio-config.js with your mainnet contract ID');
+} else {
+  console.log('  2) Update public/game-studio-config.js with your mainnet contract ID');
+}
 if (!shouldBuild) {
   console.log('  3) bun install');
   console.log('  4) bun run build');
