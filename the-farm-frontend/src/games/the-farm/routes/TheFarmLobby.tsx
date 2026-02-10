@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { StudioShell } from "./StudioShell";
 import { config } from "../../../config";
 import { useLobbyContext } from "../game/LobbyContext";
+import { fetchLobby } from "../theFarmApi";
 import "./theFarmShell.css";
 
 type LobbySnapshot = {
@@ -26,22 +27,23 @@ export function TheFarmLobby() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLobby((prev) =>
-        prev
-          ? {
-              ...prev,
-              // Simulate opponent arriving after a few ticks
-              player2: prev.player2 || (Date.now() - prev.createdAt > 4000 ? "P2-joined" : undefined),
-              status:
-                prev.player1 && prev.player2
-                  ? "active"
-                  : "waiting",
-              p1Floor: prev.p1Floor,
-              p2Floor: prev.player2 ? prev.p2Floor : 0,
-            }
-          : null
-      );
-    }, 900);
+      if (ctxLobbyId) {
+        fetchLobby(Number(ctxLobbyId.replace("L", "")))
+          .then((chainLobby) => {
+            if (!chainLobby) return;
+            setLobby({
+              lobbyId: ctxLobbyId,
+              status: chainLobby.status.tag === "Active" ? "active" : chainLobby.status.tag === "Finished" ? "finished" : "waiting",
+              player1: chainLobby.player1,
+              player2: chainLobby.player2 ?? undefined,
+              p1Floor: chainLobby.p1.floor,
+              p2Floor: chainLobby.p2.floor,
+              createdAt: Date.now(),
+            });
+          })
+          .catch(() => {});
+      }
+    }, 1500);
     return () => clearInterval(interval);
   }, []);
 

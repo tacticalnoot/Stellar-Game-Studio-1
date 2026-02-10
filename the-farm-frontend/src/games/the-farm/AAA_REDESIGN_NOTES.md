@@ -115,3 +115,22 @@ Scope: `Stellar-Game-Studio-1` fork — frontend lives in `the-farm-frontend/`, 
 - Judge impression score (1–10): 7.1 — interactive shell, but still needs real RPC/attempts and 3D scene.
 - Next PR:
   - PR-5: Regenerate bindings for `contracts/the-farm`, wire real create/join/attempt via theFarmService, and surface tx hashes/events in HUD + status.
+
+## PR-5 — Bindings regenerated + live lobby polling hook
+- Goals:
+  - Replace stale bindings with real contract schema from `contracts/the-farm`.
+  - Begin live data by reading lobbies from chain (polling get_lobby).
+- Changes:
+  - Ran `bun run bindings the-farm` against contract ID `CA34IFEOQ...` (testnet) — new bindings in `bindings/the_farm/`.
+  - Added `theFarmApi.ts` using regenerated client; Lobby now polls real get_lobby when a lobbyId exists.
+  - Play/Lobby keep context; HUD unchanged; Bun installed globally (bun v1.3.9).
+- Runbook:
+  - From repo root: `bun run bindings the-farm` (already done once).
+  - From frontend: `bun install` or `npm install`; `bun run dev`.
+  - Create lobby (UI), then lobby polling will attempt `get_lobby` on-chain.
+- Known issues:
+  - Create/join/attempt still not sending tx (next PR to wire signing + submit).
+  - Polling assumes lobbyId numeric after stripping leading “L”.
+- Judge impression score (1–10): 7.3 — real RPC read-path exists; tx path still pending.
+- Next PR:
+  - Wire create_lobby/join_lobby/attempt_door with signers, show tx hashes in HUD/status; add explorer links.
