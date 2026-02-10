@@ -52,3 +52,26 @@ Scope: `Stellar-Game-Studio-1` fork — frontend lives in `the-farm-frontend/`, 
 - Introduce **react-router-dom** and restructure `App.tsx` to mount the new routes.
 - Preserve wallet hooks; avoid refactoring auth plumbing while redesigning UI.
 - Keep contract IDs/env wiring intact (`VITE_THE_FARM_CONTRACT_ID`, RPC, passphrase).
+
+---
+
+## PR-1 — Routing + Studio shell + landing baseline
+- Goals:
+  - Add real routing with dedicated pages for home/play/lobby/devlog/status/press/game.
+  - Replace single “sample card” view with a cinematic studio shell + hero + CTA.
+  - Establish a launcher screen that feels like a client, not a form.
+- Changes:
+  - Added `react-router-dom` dependency (note: install still needed locally).
+  - New StudioShell nav + background (`routes/StudioShell.tsx`, `theFarmShell.css`) and route pages (`TheFarmLanding`, `TheFarmPlay`, `TheFarmLobby`, `TheFarmDevlog`, `TheFarmStatus`, `TheFarmPress`, `TheFarmGameRoute`).
+  - `App.tsx` now mounts router + routes and defaults to `/the-farm`.
+- Runbook:
+  - From `the-farm-frontend/`: `npm install` (or `bun install`) to pull `react-router-dom`.
+  - `npm run dev` (or `bun run dev` if Bun installed).
+  - Visit `/the-farm` → CTA to `/the-farm/play`, `/the-farm/lobby`, `/the-farm/game`.
+- Known issues:
+  - Bun CLI not installed on host; install required for canonical `bun run` flow.
+  - Game canvas not yet implemented (reserved in `/the-farm/game`).
+  - Launcher/lobby actions are UI-only placeholders until PR-2 wiring.
+- Judge impression score (1–10): 6.3 — visual tone upgraded, still needs motion + real data.
+- Next PR:
+  - PR-2: Lobby UI + chain polling scaffold. Hook create/join placeholders to service layer and show live lobby/floor state.

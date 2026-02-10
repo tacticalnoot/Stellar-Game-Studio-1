@@ -1,54 +1,25 @@
-import { config } from './config';
-import { Layout } from './components/Layout';
-import { useWallet } from './hooks/useWallet';
-import { TheFarmGame } from './games/the-farm/TheFarmGame';
-
-const GAME_ID = 'the-farm';
-const GAME_TITLE = import.meta.env.VITE_GAME_TITLE || 'The Farm';
-const GAME_TAGLINE = import.meta.env.VITE_GAME_TAGLINE || 'On-chain game on Stellar';
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { TheFarmLanding } from "./games/the-farm/routes/TheFarmLanding";
+import { TheFarmPlay } from "./games/the-farm/routes/TheFarmPlay";
+import { TheFarmLobby } from "./games/the-farm/routes/TheFarmLobby";
+import { TheFarmDevlog } from "./games/the-farm/routes/TheFarmDevlog";
+import { TheFarmStatus } from "./games/the-farm/routes/TheFarmStatus";
+import { TheFarmPress } from "./games/the-farm/routes/TheFarmPress";
+import { TheFarmGameRoute } from "./games/the-farm/routes/TheFarmGameRoute";
 
 export default function App() {
-  const { publicKey, isConnected, isConnecting, error, isDevModeAvailable } = useWallet();
-  const userAddress = publicKey ?? '';
-  const contractId = config.contractIds[GAME_ID] || '';
-  const hasContract = contractId && contractId !== 'YOUR_CONTRACT_ID';
-  const devReady = isDevModeAvailable();
-
   return (
-    <Layout title={GAME_TITLE} subtitle={GAME_TAGLINE}>
-      {!hasContract ? (
-        <div className="card">
-          <h3 className="gradient-text">Contract Not Configured</h3>
-          <p style={{ color: 'var(--color-ink-muted)', marginTop: '1rem' }}>
-            Run <code>bun run setup</code> to deploy and configure testnet contract IDs, or set
-            <code>VITE_THE_FARM_CONTRACT_ID</code> in the root <code>.env</code>.
-          </p>
-        </div>
-      ) : !devReady ? (
-        <div className="card">
-          <h3 className="gradient-text">Dev Wallets Missing</h3>
-          <p style={{ color: 'var(--color-ink-muted)', marginTop: '0.75rem' }}>
-            Run <code>bun run setup</code> to generate dev wallets for Player 1 and Player 2.
-          </p>
-        </div>
-      ) : !isConnected ? (
-        <div className="card">
-          <h3 className="gradient-text">Connecting Dev Wallet</h3>
-          <p style={{ color: 'var(--color-ink-muted)', marginTop: '0.75rem' }}>
-            The dev wallet switcher auto-connects Player 1. Use the switcher to toggle players.
-          </p>
-          {error && <div className="notice error" style={{ marginTop: '1rem' }}>{error}</div>}
-          {isConnecting && <div className="notice info" style={{ marginTop: '1rem' }}>Connecting...</div>}
-        </div>
-      ) : (
-        <TheFarmGame
-          userAddress={userAddress}
-          currentEpoch={1}
-          availablePoints={1000000000n}
-          onStandingsRefresh={() => {}}
-          onGameComplete={() => {}}
-        />
-      )}
-    </Layout>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/the-farm" element={<TheFarmLanding />} />
+        <Route path="/the-farm/play" element={<TheFarmPlay />} />
+        <Route path="/the-farm/lobby" element={<TheFarmLobby />} />
+        <Route path="/the-farm/devlog" element={<TheFarmDevlog />} />
+        <Route path="/the-farm/status" element={<TheFarmStatus />} />
+        <Route path="/the-farm/press" element={<TheFarmPress />} />
+        <Route path="/the-farm/game" element={<TheFarmGameRoute />} />
+        <Route path="*" element={<Navigate to="/the-farm" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

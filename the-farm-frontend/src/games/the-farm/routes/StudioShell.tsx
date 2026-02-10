@@ -1,0 +1,59 @@
+import { Link, useLocation } from "react-router-dom";
+import "./theFarmShell.css";
+
+const NAV_LINKS = [
+  { to: "/the-farm", label: "Home" },
+  { to: "/the-farm/play", label: "Play" },
+  { to: "/the-farm/lobby", label: "Lobby" },
+  { to: "/the-farm/devlog", label: "Devlog" },
+  { to: "/the-farm/status", label: "Status" },
+  { to: "/the-farm/press", label: "Press Kit" },
+];
+
+type StudioShellProps = {
+  children: React.ReactNode;
+  tone?: "dark" | "glass";
+};
+
+export function StudioShell({ children, tone = "dark" }: StudioShellProps) {
+  const { pathname } = useLocation();
+
+  return (
+    <div className={`tf-shell tf-shell--${tone}`}>
+      <div className="tf-shell__bg">
+        <div className="tf-shell__grid" />
+        <div className="tf-shell__runes" />
+      </div>
+      <header className="tf-shell__nav">
+        <div className="tf-shell__brand">
+          <span className="tf-shell__brand-mark">⚔️</span>
+          <div>
+            <p className="tf-shell__brand-overline">Stellar ZK Studio</p>
+            <h1 className="tf-shell__brand-title">THE FARM</h1>
+          </div>
+        </div>
+        <nav className="tf-shell__links">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={
+                pathname.startsWith(link.to)
+                  ? "tf-shell__link tf-shell__link--active"
+                  : "tf-shell__link"
+              }
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="tf-shell__cta">
+          <Link to="/the-farm/play" className="tf-button tf-button--primary">
+            PLAY NOW
+          </Link>
+        </div>
+      </header>
+      <main className="tf-shell__content">{children}</main>
+    </div>
+  );
+}
