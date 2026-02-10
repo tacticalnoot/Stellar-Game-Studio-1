@@ -1,7 +1,73 @@
+import { useEffect, useMemo, useState } from "react";
 import { StudioShell } from "./StudioShell";
+import { config } from "../../../config";
 import "./theFarmShell.css";
 
+type LobbySnapshot = {
+  lobbyId: string;
+  status: "waiting" | "active";
+  player1?: string;
+  player2?: string;
+  p1Floor: number;
+  p2Floor: number;
+  createdAt: number;
+};
+
 export function TheFarmLobby() {
+  const [lobby, setLobby] = useState<LobbySnapshot | null>(null);
+  const [joiningCode, setJoiningCode] = useState("");
+
+  const generatedLobby = useMemo(
+    () => `L${Math.floor(Date.now() % 1_000_000).toString().padStart(6, "0")}`,
+    []
+  );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLobby((prev) =>
+        prev
+          ? {
+              ...prev,
+              // Simulate opponent arriving after a few ticks
+              player2: prev.player2 || (Date.now() - prev.createdAt > 4000 ? "P2-joined" : undefined),
+              status:
+                prev.player1 && prev.player2
+                  ? "active"
+                  : "waiting",
+              p1Floor: prev.p1Floor,
+              p2Floor: prev.player2 ? prev.p2Floor : 0,
+            }
+          : null
+      );
+    }, 900);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleCreate = () => {
+    setLobby({
+      lobbyId: generatedLobby,
+      status: "waiting",
+      player1: "P1-connected",
+      player2: undefined,
+      p1Floor: 1,
+      p2Floor: 0,
+      createdAt: Date.now(),
+    });
+  };
+
+  const handleJoin = () => {
+    if (!joiningCode.trim()) return;
+    setLobby({
+      lobbyId: joiningCode.trim(),
+      status: "waiting",
+      player1: "Host",
+      player2: "You",
+      p1Floor: 1,
+      p2Floor: 1,
+      createdAt: Date.now(),
+    });
+  };
+
   return (
     <StudioShell>
       <section className="tf-lobby">
@@ -12,13 +78,24 @@ export function TheFarmLobby() {
             P1 spins a lobby; P2 enters code. Commitments lock before the run. Hub call: start_game() when both are ready.
           </p>
           <div className="tf-lobby__actions">
-            <button className="tf-button tf-button--primary">Create lobby</button>
-            <button className="tf-button tf-button--ghost">Join with code</button>
+            <button className="tf-button tf-button--primary" onClick={handleCreate}>
+              Create lobby
+            </button>
+            <input
+              className="tf-input"
+              placeholder="Lobby code"
+              value={joiningCode}
+              onChange={(e) => setJoiningCode(e.target.value)}
+            />
+            <button className="tf-button tf-button--ghost" onClick={handleJoin}>
+              Join with code
+            </button>
           </div>
           <div className="tf-lobby__meta">
             <span className="tf-pill tf-pill--line">Floors: 10</span>
             <span className="tf-pill tf-pill--line">Gate floors: 1 & 5</span>
             <span className="tf-pill tf-pill--line">Attempts: on-chain</span>
+            <span className="tf-pill tf-pill--line">Contract: {config.contractIds["the-farm"] || "unset"}</span>
           </div>
         </div>
 
@@ -26,12 +103,23 @@ export function TheFarmLobby() {
           <p className="tf-panel__label">Presence</p>
           <h3 className="tf-panel__title">Ghost beacons</h3>
           <p className="tf-panel__copy">
-            We mirror chain progress for opponent visibility. P2 not here? We still render a flicker phantom to keep tension high.
+            Chain-authoritative progress will render here. Until RPC wiring, we mirror a live-ish heartbeat so the UI never feels dead.
           </p>
           <div className="tf-status-row">
-            <span className="tf-pill tf-pill--amber">P1: waiting</span>
-            <span className="tf-pill tf-pill--line">P2: invite pending</span>
+            <span className="tf-pill tf-pill--amber">
+              P1: {lobby?.player1 || "waiting"}
+            </span>
+            <span className="tf-pill tf-pill--line">
+              P2: {lobby?.player2 || "invite pending"}
+            </span>
           </div>
+          {lobby && (
+            <div className="tf-lobby__state">
+              <div>Lobby: {lobby.lobbyId}</div>
+              <div>Status: {lobby.status}</div>
+              <div>Floors — P1: {lobby.p1Floor} / P2: {lobby.p2Floor}</div>
+            </div>
+          )}
         </div>
       </section>
     </StudioShell>

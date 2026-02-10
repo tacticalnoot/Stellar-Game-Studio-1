@@ -75,3 +75,22 @@ Scope: `Stellar-Game-Studio-1` fork — frontend lives in `the-farm-frontend/`, 
 - Judge impression score (1–10): 6.3 — visual tone upgraded, still needs motion + real data.
 - Next PR:
   - PR-2: Lobby UI + chain polling scaffold. Hook create/join placeholders to service layer and show live lobby/floor state.
+
+## PR-2 — Lobby scaffold + motion polish
+- Goals:
+  - Give lobby/launcher tangible interactions (create/join code, live-ish heartbeat) so it doesn’t feel dead.
+  - Surface contract IDs/status on play/status pages.
+  - Add baseline motion to hero/nav/panels for AAA feel.
+- Changes:
+  - Play page now shows contract ID from config and extra preflight check.
+  - Lobby page now has create/join inputs, shows lobby ID/status/floors, and a lightweight heartbeat to avoid dead UI.
+  - Status page pulls dungeon contract from config; hero/nav/panels get motion keyframes.
+- Runbook:
+  - `npm install` (or `bun install` after Bun is installed) to bring in react-router-dom (already in package.json).
+  - `npm run dev` → navigate to `/the-farm`, `/the-farm/play`, `/the-farm/lobby`.
+- Known issues:
+  - Lobby actions are client-side only (no RPC yet); chain polling still pending.
+  - Bun not installed on host; need Bun for canonical `bun run` scripts.
+- Judge impression score (1–10): 6.8 — more alive, still needs real data + fullscreen canvas.
+- Next PR:
+  - PR-3: Fullscreen game canvas + HUD shell, start mounting Three.js/controls, and prep worker lane stub.

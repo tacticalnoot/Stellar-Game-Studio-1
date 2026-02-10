@@ -1,4 +1,5 @@
 import { StudioShell } from "./StudioShell";
+import { config } from "../../../config";
 import "./theFarmShell.css";
 
 export function TheFarmStatus() {
@@ -10,7 +11,7 @@ export function TheFarmStatus() {
         <p className="tf-panel__copy">
           Hub: CB4VZAT2U3UC6XFK3N23SKRF2NDCMP3QHJYMCHHFMZO7MRQO6DQ2EMYG
           <br />
-          Dungeon: CA34IFEOQADUHTDIMJGTQ2I7O34QYHL4FFXFOJYTUSPVRMJQCS3UAY6N
+          Dungeon: {config.contractIds["the-farm"] || "unset"}
         </p>
         <div className="tf-status-row">
           <span className="tf-pill tf-pill--mint">Ledger heartbeat: OK</span>

@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { StudioShell } from "./StudioShell";
+import { config } from "../../../config";
 import "./theFarmShell.css";
 
 export function TheFarmPlay() {
@@ -37,6 +38,10 @@ export function TheFarmPlay() {
             <div className="tf-checks__item tf-checks__item--info">
               <span>⚙️ Graphics</span>
               <strong>DPR capped · Shadows off</strong>
+            </div>
+            <div className="tf-checks__item tf-checks__item--info">
+              <span>🔗 Contract</span>
+              <strong>{config.contractIds["the-farm"] || "Unset"}</strong>
             </div>
           </div>
         </div>

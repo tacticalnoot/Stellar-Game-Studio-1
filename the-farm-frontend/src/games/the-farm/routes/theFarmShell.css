@@ -53,6 +53,7 @@
     border-radius: 16px;
     background: rgba(10, 14, 26, 0.8);
     backdrop-filter: blur(12px);
+    animation: tf-fade-up 0.6s ease;
 }
 .tf-shell__brand {
     display: flex;
@@ -94,6 +95,7 @@
 .tf-shell__link:hover {
     color: var(--tf-ink);
     border-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
 }
 .tf-shell__link--active {
     color: #0a0a0a;
@@ -118,6 +120,7 @@
     border-radius: 18px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     background: linear-gradient(145deg, rgba(9, 16, 28, 0.9), rgba(8, 12, 18, 0.78));
+    animation: tf-hero-rise 0.8s ease;
 }
 .tf-hero__text {
     display: grid;
@@ -262,6 +265,7 @@
     background: rgba(10, 12, 20, 0.85);
     display: grid;
     gap: 8px;
+    animation: tf-fade-up 0.5s ease;
 }
 .tf-panel--glass {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
@@ -440,6 +444,27 @@
     100% {
         transform: scale(1);
         opacity: 0.6;
+    }
+}
+
+@keyframes tf-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes tf-hero-rise {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
