@@ -132,5 +132,22 @@ Scope: `Stellar-Game-Studio-1` fork — frontend lives in `the-farm-frontend/`, 
   - Create/join/attempt still not sending tx (next PR to wire signing + submit).
   - Polling assumes lobbyId numeric after stripping leading “L”.
 - Judge impression score (1–10): 7.3 — real RPC read-path exists; tx path still pending.
+
+## PR-6b — Tx wiring (create/join/attempt) + explorer links
+- Goals:
+  - Move from sim to real tx calls for lobby + attempt.
+  - Surface tx hashes with explorer links in lobby/game/status.
+- Changes:
+  - `theFarmApi` now exposes create_lobby, join_lobby, attempt_door with signer.
+  - Lobby buttons call real txs; show hash + errors; keep polling get_lobby.
+  - Game HUD submits attempt_door (placeholder proof) and shows hash with explorer link; nonce tracked in context.
+  - Status page now shows last tx link if present.
+- Runbook:
+  - `bun install` then `bun run dev`.
+  - Flow: create lobby → lobby shows hash + poll; go to game, pointer-lock, submit attempt_door → hash links to explorer.
+- Known issues:
+  - Proof bytes still placeholder; contract may reject without commit/proof; need real ZK + commit flow.
+  - start_game/end_game events still not surfaced; status feed minimal.
+- Judge impression score (1–10): 7.6 — tx path live, hashes visible; still needs real proofs and 3D scene.
 - Next PR:
-  - Wire create_lobby/join_lobby/attempt_door with signers, show tx hashes in HUD/status; add explorer links.
+  - Integrate real commit/proof flow + 3D scene + hub events.

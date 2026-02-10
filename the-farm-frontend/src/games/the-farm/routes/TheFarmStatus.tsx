@@ -1,8 +1,12 @@
 import { StudioShell } from "./StudioShell";
 import { config } from "../../../config";
+import { useLobbyContext } from "../game/LobbyContext";
 import "./theFarmShell.css";
 
 export function TheFarmStatus() {
+  const { lastTxHash } = useLobbyContext();
+  const explorer = (hash: string) => `https://stellar.expert/explorer/testnet/tx/${hash}`;
+
   return (
     <StudioShell tone="glass">
       <section className="tf-panel tf-panel--status">
@@ -15,8 +19,12 @@ export function TheFarmStatus() {
         </p>
         <div className="tf-status-row">
           <span className="tf-pill tf-pill--mint">Ledger heartbeat: OK</span>
-          <span className="tf-pill tf-pill--amber">Tx explorer links coming</span>
           <span className="tf-pill tf-pill--line">start_game / end_game events required</span>
+          {lastTxHash && (
+            <a className="tf-pill tf-pill--line" href={explorer(lastTxHash)} target="_blank" rel="noreferrer">
+              Last tx
+            </a>
+          )}
         </div>
         <p className="tf-panel__copy">
           Next steps: surface on-chain events, attach tx hashes, and show last attempt per lobby.

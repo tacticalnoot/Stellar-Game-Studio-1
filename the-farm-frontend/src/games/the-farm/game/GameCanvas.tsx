@@ -4,6 +4,10 @@ import { useWallet } from "@/hooks/useWallet";
 import { attemptDoor as apiAttemptDoor } from "../theFarmApi";
 import "./gameCanvas.css";
 
+function explorerUrl(hash: string) {
+  return `https://stellar.expert/explorer/testnet/tx/${hash}`;
+}
+
 export function GameCanvas() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [locked, setLocked] = useState(false);
@@ -96,7 +100,11 @@ export function GameCanvas() {
             SUBMIT ATTEMPT (ON-CHAIN)
           </button>
           {result && <div className="tf-hud-result">{result}</div>}
-          {lastTxHash && <div className="tf-hud-result tf-hud-result--line">tx: {lastTxHash}</div>}
+          {lastTxHash && (
+            <div className="tf-hud-result tf-hud-result--line">
+              tx: <a href={explorerUrl(lastTxHash)} target="_blank" rel="noreferrer">{lastTxHash}</a>
+            </div>
+          )}
           {attemptError && <div className="tf-hud-result tf-hud-result--line" style={{ color: "#ffb3a1" }}>{attemptError}</div>}
         </div>
       </div>

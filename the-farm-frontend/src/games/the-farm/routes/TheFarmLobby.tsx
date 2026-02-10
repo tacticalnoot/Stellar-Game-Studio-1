@@ -7,6 +7,8 @@ import type { ContractSigner } from "@/types/signer";
 import { fetchLobby, createLobby as apiCreateLobby, joinLobby as apiJoinLobby } from "../theFarmApi";
 import "./theFarmShell.css";
 
+const explorer = (hash: string) => `https://stellar.expert/explorer/testnet/tx/${hash}`;
+
 type LobbySnapshot = {
   lobbyId: string;
   status: "waiting" | "active";
@@ -158,7 +160,14 @@ export function TheFarmLobby() {
               <div>Status: {lobby.status}</div>
               <div>Role: {role || "unassigned"}</div>
               <div>Floors — P1: {lobby.p1Floor} / P2: {lobby.p2Floor}</div>
-              {txHash && <div>Last tx: {txHash}</div>}
+              {txHash && (
+                <div>
+                  Last tx:{" "}
+                  <a href={explorer(txHash)} target="_blank" rel="noreferrer">
+                    {txHash}
+                  </a>
+                </div>
+              )}
             </div>
           )}
           {error && <div className="tf-panel__copy" style={{ color: "#ffb3a1" }}>{error}</div>}
