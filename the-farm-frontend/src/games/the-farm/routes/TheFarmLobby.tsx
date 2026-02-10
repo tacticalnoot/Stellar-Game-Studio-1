@@ -4,7 +4,7 @@ import { config } from "../../../config";
 import { useLobbyContext } from "../game/LobbyContext";
 import { useWallet } from "@/hooks/useWallet";
 import type { ContractSigner } from "@/types/signer";
-import { fetchLobby } from "../theFarmApi";
+import { fetchLobby, createLobby as apiCreateLobby, joinLobby as apiJoinLobby } from "../theFarmApi";
 import "./theFarmShell.css";
 
 type LobbySnapshot = {
@@ -52,7 +52,7 @@ export function TheFarmLobby() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     const signer = getSigner();
     if (!signer || !publicKey) {
       setError("Connect dev wallet to create a lobby.");
@@ -69,11 +69,15 @@ export function TheFarmLobby() {
     };
     setLobby(newLobby);
     setLobbyContext(newLobby.lobbyId, "player1");
-    // TODO: call createLobby(tx) — blocked until signer wiring ready
-    setTxHash("pending on-chain (next PR)");
+    try {
+      const res = await apiCreateLobby(publicKey, signer);
+      setTxHash(res.hash);
+    } catch (e: any) {
+      setError(e?.message || "Create lobby failed");
+    }
   };
 
-  const handleJoin = () => {
+  const handleJoin = async () => {
     if (!joiningCode.trim()) return;
     const signer = getSigner();
     if (!signer || !publicKey) {
@@ -91,7 +95,12 @@ export function TheFarmLobby() {
     };
     setLobby(joined);
     setLobbyContext(joined.lobbyId, "player2");
-    setTxHash("pending on-chain (next PR)");
+    try {
+      const res = await apiJoinLobby(Number(joiningCode.replace("L", "")), publicKey, signer);
+      setTxHash(res.hash);
+    } catch (e: any) {
+      setError(e?.message || "Join lobby failed");
+    }
   };
 
   const setLobbyContext = (id: string, r: LobbyRole) => {

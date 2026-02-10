@@ -8,9 +8,11 @@ export type LobbyContextState = {
   p1Floor: number;
   p2Floor: number;
   lastTxHash: string | null;
+  attemptNonce: number;
   setLobby: (id: string, role: LobbyRole) => void;
   setFloors: (p1: number, p2: number) => void;
   setTxHash: (hash: string | null) => void;
+  bumpNonce: () => void;
 };
 
 const LobbyContext = createContext<LobbyContextState | null>(null);
@@ -21,6 +23,7 @@ export function LobbyProvider({ children }: { children: React.ReactNode }) {
   const [p1Floor, setP1] = useState(0);
   const [p2Floor, setP2] = useState(0);
   const [lastTxHash, setLastTx] = useState<string | null>(null);
+  const [attemptNonce, setAttemptNonce] = useState(0);
 
   const setLobby = (id: string, r: LobbyRole) => {
     setLobbyId(id);
@@ -31,10 +34,11 @@ export function LobbyProvider({ children }: { children: React.ReactNode }) {
     setP2(p2);
   };
   const setTxHash = (hash: string | null) => setLastTx(hash);
+  const bumpNonce = () => setAttemptNonce((n) => n + 1);
 
   return (
     <LobbyContext.Provider
-      value={{ lobbyId, role, p1Floor, p2Floor, lastTxHash, setLobby, setFloors, setTxHash }}
+      value={{ lobbyId, role, p1Floor, p2Floor, lastTxHash, attemptNonce, setLobby, setFloors, setTxHash, bumpNonce }}
     >
       {children}
     </LobbyContext.Provider>

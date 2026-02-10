@@ -1,6 +1,7 @@
 import { Client } from "../../../bindings/the_farm/src/index";
 import { NETWORK_PASSPHRASE, RPC_URL, DEFAULT_METHOD_OPTIONS } from "@/utils/constants";
 import type { contract } from "@stellar/stellar-sdk/contract";
+import { Buffer } from "buffer";
 
 const contractId = import.meta.env.VITE_THE_FARM_CONTRACT_ID;
 
@@ -64,8 +65,8 @@ export async function attemptDoor(
   floor: number,
   nonce: number,
   player: string,
-  proof: Buffer,
-  publicInputs: Buffer,
+  proof: Buffer = Buffer.alloc(0),
+  publicInputs: Buffer = Buffer.alloc(0),
   signer: Pick<contract.ClientOptions, "signTransaction">
 ) {
   const client = signingClient(player, signer);

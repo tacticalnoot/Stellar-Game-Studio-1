@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { useLobbyContext } from "./LobbyContext";
 import { useWallet } from "@/hooks/useWallet";
+import { attemptDoor as apiAttemptDoor } from "../theFarmApi";
 import "./gameCanvas.css";
 
 export function GameCanvas() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [locked, setLocked] = useState(false);
-  const { lobbyId, role, p1Floor, p2Floor, setFloors, lastTxHash, setTxHash } = useLobbyContext();
+  const { lobbyId, role, p1Floor, p2Floor, setFloors, lastTxHash, setTxHash, attemptNonce, bumpNonce } =
+    useLobbyContext();
   const { getContractSigner, publicKey } = useWallet();
   const [attempts, setAttempts] = useState(0);
   const [result, setResult] = useState<string | null>(null);
+  const [attemptError, setAttemptError] = useState<string | null>(null);
 
   useEffect(() => {
     const el = canvasRef.current;
@@ -37,12 +40,25 @@ export function GameCanvas() {
       setResult("Connect wallet + lobby before attempting.");
       return;
     }
-    // TODO: replace with real attempt_door call next PR
-    const success = Math.random() > 0.5;
-    const hash = `sim-${Date.now()}`;
-    setTxHash(hash);
-    setResult(success ? "Door opens. Floor advanced." : "Trap sprung. Proof still submitted.");
-    if (success) setFloors(p1Floor + 1, p2Floor);
+    setAttemptError(null);
+    try {
+      const res = await apiAttemptDoor(
+        Number(lobbyId.replace("L", "")),
+        p1Floor,
+        attemptNonce + 1,
+        publicKey,
+        undefined,
+        undefined,
+        signer
+      );
+      setTxHash(res.hash);
+      bumpNonce();
+      // Assume success until poll catches floor
+      setResult("Attempt submitted on-chain. Awaiting ledger.");
+    } catch (e: any) {
+      setAttemptError(e?.message || "Attempt failed");
+      setResult("Attempt failed");
+    }
     setTimeout(() => setResult(null), 2500);
   };
 
@@ -77,10 +93,11 @@ export function GameCanvas() {
             {locked ? "LOCKED" : "CLICK TO LOCK + START"}
           </button>
           <button className="tf-button tf-button--ghost" onClick={attemptDoor}>
-            SUBMIT ATTEMPT (SIM)
+            SUBMIT ATTEMPT (ON-CHAIN)
           </button>
           {result && <div className="tf-hud-result">{result}</div>}
           {lastTxHash && <div className="tf-hud-result tf-hud-result--line">tx: {lastTxHash}</div>}
+          {attemptError && <div className="tf-hud-result tf-hud-result--line" style={{ color: "#ffb3a1" }}>{attemptError}</div>}
         </div>
       </div>
     </div>
