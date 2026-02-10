@@ -3,6 +3,8 @@ import { useLobbyContext } from "./LobbyContext";
 import { useWallet } from "@/hooks/useWallet";
 import { attemptDoor as apiAttemptDoor } from "../theFarmApi";
 import { initScene, disposeScene } from "./threeScene";
+// @ts-ignore
+import ZkWorker from "../workers/zkProver.worker.ts?worker&inline";
 import { CommitState } from "./CommitState";
 import "./gameCanvas.css";
 
@@ -19,6 +21,10 @@ export function GameCanvas() {
   const [attempts, setAttempts] = useState(0);
   const [result, setResult] = useState<string | null>(null);
   const [attemptError, setAttemptError] = useState<string | null>(null);
+  const [workerReady, setWorkerReady] = useState(true);
+  const [proofBusy, setProofBusy] = useState(false);
+
+  const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
     const el = canvasRef.current;
@@ -38,6 +44,13 @@ export function GameCanvas() {
     return () => disposeScene(el);
   }, []);
 
+  useEffect(() => {
+    const w: Worker = new ZkWorker();
+    workerRef.current = w;
+    setWorkerReady(true);
+    return () => w.terminate();
+  }, []);
+
   const requestLock = () => {
     const el = canvasRef.current;
     if (!el) return;
@@ -55,13 +68,16 @@ export function GameCanvas() {
     }
     setAttemptError(null);
     try {
+      setProofBusy(true);
+      const proofPayload = await runProofWorker();
+      setProofBusy(false);
       const res = await apiAttemptDoor(
         Number(lobbyId.replace("L", "")),
         p1Floor,
         attemptNonce + 1,
         publicKey,
-        undefined,
-        undefined,
+        proofPayload.proof,
+        proofPayload.publicInputs,
         signer
       );
       setTxHash(res.hash);
@@ -105,7 +121,7 @@ export function GameCanvas() {
             {locked ? "LOCKED" : "CLICK TO LOCK + START"}
           </button>
           <button className="tf-button tf-button--ghost" onClick={attemptDoor}>
-            SUBMIT ATTEMPT (ON-CHAIN)
+            {proofBusy ? "FORGING…" : "SUBMIT ATTEMPT"}
           </button>
           {result && <div className="tf-hud-result">{result}</div>}
           {lastTxHash && (
@@ -125,5 +141,22 @@ export function GameCanvas() {
     } catch {
       return null;
     }
+  }
+
+  async function runProofWorker(): Promise<{ proof: Buffer; publicInputs: Buffer }> {
+    return new Promise((resolve) => {
+      if (!workerRef.current) {
+        resolve({ proof: Buffer.alloc(0), publicInputs: Buffer.alloc(0) });
+        return;
+      }
+      workerRef.current.onmessage = (msg) => {
+        const { proof, publicInputs } = msg.data || {};
+        resolve({
+          proof: Buffer.from(proof || []),
+          publicInputs: Buffer.from(publicInputs || []),
+        });
+      };
+      workerRef.current.postMessage({ payload: { lobbyId, floor: p1Floor, nonce: attemptNonce + 1 } });
+    });
   }
 }
