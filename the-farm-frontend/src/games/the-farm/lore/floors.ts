@@ -4,6 +4,7 @@ export type FloorDesign = {
   proofStack: "circom" | "noir" | "risc0" | "mixed";
   coOp: boolean;
   miniGame: string;
+  realWorldUse: string;
   playerArc: string;
   copy: string;
 };
@@ -15,6 +16,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "circom",
     coOp: false,
     miniGame: "Rune Stencil Rush — both players race to stamp the correct rune; first accurate stamp advances, second gets a hint.",
+    realWorldUse: "Border declaration form verified without exposing cargo contents.",
     playerArc: "You learn to act fast under scrutiny, defining your call-sign.",
     copy: "Your manifest must be sealed; the checkpoint AI only respects clean stencils.",
   },
@@ -24,6 +26,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "circom",
     coOp: false,
     miniGame: "Weight Bluff — choose cargo crates; one is real weight, others decoys. Bluffing logged; truth advances.",
+    realWorldUse: "Truck weigh-station ticket proving compliance without revealing route.",
     playerArc: "You realize honesty is an accelerator when the ledger is the judge.",
     copy: "Scales hum; only truthful weight unlocks the lift.",
   },
@@ -33,6 +36,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "circom",
     coOp: false,
     miniGame: "Ledger Slots — line up sigils to match the ledger checksum; wrong aligns trigger sand traps.",
+    realWorldUse: "Notary-sealed timestamp anchoring a document hash.",
     playerArc: "You start treating each attempt as part of your legend, not a mistake.",
     copy: "Notary lights flicker as your entry etches into stone.",
   },
@@ -42,6 +46,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "noir",
     coOp: false,
     miniGame: "Echo Whisper — speak a rune pattern; mirror judges sincerity via rhythm matching.",
+    realWorldUse: "Witness statement attested without revealing the secret testimony.",
     playerArc: "You learn that cadence and intent outweigh volume.",
     copy: "The mirror remembers tone, not words.",
   },
@@ -51,6 +56,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "noir",
     coOp: true,
     miniGame: "Sync Keys — two players must press paired glyphs within a heartbeat window; desync logs but doesn’t open.",
+    realWorldUse: "Dual-control launch keys ensuring two parties consent to a transaction.",
     playerArc: "Trust forms; your partner becomes part of your toolkit.",
     copy: "Two turns, one gate; harmony or halt.",
   },
@@ -60,6 +66,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "noir",
     coOp: false,
     miniGame: "Path Sketch — draw a flight vector on a hologrid; correct vector opens a corridor. Paths hidden from opponent, only success signal shown.",
+    realWorldUse: "Signed flight plan / supply-chain route committed privately, validated publicly.",
     playerArc: "You master planning under secrecy.",
     copy: "Mission control only needs your checksum.",
   },
@@ -69,6 +76,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "noir",
     coOp: false,
     miniGame: "Pitch Duel — choose a tone; engine hum responds. Matching the harmonic raises the platform. Opponent sees your hum state only.",
+    realWorldUse: "Access control where biometric liveness is proven without sharing the biometric sample.",
     playerArc: "Precision over force; your confidence hardens.",
     copy: "Engines purr when truth is on key.",
   },
@@ -78,6 +86,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "risc0",
     coOp: false,
     miniGame: "Forge Run — feed ingredients to a sealed crucible; receipt proves the recipe. Wrong mix vents steam but still logs.",
+    realWorldUse: "Tamper-proof computation of an ML model producing a signed receipt (e.g., risk score) without revealing the model.",
     playerArc: "You entrust work to the machine and accept the delay of heavy proof.",
     copy: "The furnace signs your attempt; the bridge lowers only for the right alloy.",
   },
@@ -87,6 +96,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "risc0",
     coOp: false,
     miniGame: "Playback Pilot — replay your path in a slowed-down sim; sealed recorder signs it. Correct replay synchronizes the wormhole ring.",
+    realWorldUse: "Blackbox flight recorder attesting to a vehicle’s path for insurance without sharing raw telemetry.",
     playerArc: "You reconcile memory with evidence; discipline peaks.",
     copy: "The recorder believes only what it signs.",
   },
@@ -96,6 +106,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     proofStack: "mixed",
     coOp: true,
     miniGame: "Final Braid — weave your manifests, oaths, and blackbox receipts into a final codeword; submit together. First to weave right triggers end_game.",
+    realWorldUse: "Compliance bundle: KYC attestation + transaction audit + compute receipt rolled into one escrow release.",
     playerArc: "You and your rival-ally conclude the saga: respect through evidence.",
     copy: "All seals converge; the Archive crowns the one who braids cleanest.",
   },
