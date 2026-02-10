@@ -3,6 +3,7 @@ import { useLobbyContext } from "./LobbyContext";
 import { useWallet } from "@/hooks/useWallet";
 import { attemptDoor as apiAttemptDoor } from "../theFarmApi";
 import { initScene, disposeScene } from "./threeScene";
+import { floorProofPlan } from "../proofPlan";
 // @ts-ignore
 import ZkWorker from "../workers/zkProver.worker.ts?worker&inline";
 import { CommitState } from "./CommitState";
@@ -105,6 +106,9 @@ export function GameCanvas() {
             <div className="tf-hud-chip tf-hud-chip--line">Floor P2: {p2Floor}/10</div>
             <div className="tf-hud-chip tf-hud-chip--amber">Attempts: {attempts}</div>
             <div className="tf-hud-chip tf-hud-chip--mint">Network: testnet</div>
+            <div className="tf-hud-chip tf-hud-chip--line">
+              Stack: {floorProofPlan[p1Floor] || "mixed"}
+            </div>
           </div>
           <div className="tf-hud-right">
             <div className="tf-hud-chip tf-hud-chip--line">Lobby: {lobbyId || "unset"}</div>

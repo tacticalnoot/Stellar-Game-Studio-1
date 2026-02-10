@@ -151,3 +151,20 @@ Scope: `Stellar-Game-Studio-1` fork — frontend lives in `the-farm-frontend/`, 
 - Judge impression score (1–10): 7.6 — tx path live, hashes visible; still needs real proofs and 3D scene.
 - Next PR:
   - Integrate real commit/proof flow + 3D scene + hub events.
+
+## PR-10 — Proof stack plan + worker stub wiring
+- Goals:
+  - Prepare for multi-proof pipeline (Circom + Noir + RISC Zero) with per-floor mapping.
+  - Keep copy subtle (no tech brag) while hinting “sealed runs”.
+- Changes:
+  - Added `proofPlan.ts` mapping floors to proof stacks (1-3 Circom, 4-7 Noir, 8-9 RISC0, 10 mixed).
+  - Worker stub runs before attempts; HUD shows intended proof stack.
+  - Copy toned down across landing/play/lobby/game overlays.
+- Runbook:
+  - `bun run dev`; HUD shows stack tag by floor.
+- Known issues:
+  - Worker still stub (no real proofs).
+  - Hub events still missing.
+- Judge impression score (1–10): 7.7 — clearer intent, still needs real proofs/events.
+- Next PR:
+  - Swap worker to real Noir/Circom/RISC0 proofs, bind commit to proof, surface hub events.
