@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { StudioShell } from "./StudioShell";
 import { config } from "../../../config";
 import { useLobbyContext } from "../game/LobbyContext";
+import { useWallet } from "@/hooks/useWallet";
+import type { ContractSigner } from "@/types/signer";
 import { fetchLobby } from "../theFarmApi";
 import "./theFarmShell.css";
 
@@ -17,8 +19,11 @@ type LobbySnapshot = {
 
 export function TheFarmLobby() {
   const { setLobby, lobbyId: ctxLobbyId, role } = useLobbyContext();
+  const { getContractSigner, publicKey, walletType } = useWallet();
   const [lobby, setLobby] = useState<LobbySnapshot | null>(null);
   const [joiningCode, setJoiningCode] = useState("");
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const generatedLobby = useMemo(
     () => `L${Math.floor(Date.now() % 1_000_000).toString().padStart(6, "0")}`,
@@ -48,6 +53,11 @@ export function TheFarmLobby() {
   }, []);
 
   const handleCreate = () => {
+    const signer = getSigner();
+    if (!signer || !publicKey) {
+      setError("Connect dev wallet to create a lobby.");
+      return;
+    }
     const newLobby = {
       lobbyId: generatedLobby,
       status: "waiting",
@@ -59,10 +69,17 @@ export function TheFarmLobby() {
     };
     setLobby(newLobby);
     setLobbyContext(newLobby.lobbyId, "player1");
+    // TODO: call createLobby(tx) — blocked until signer wiring ready
+    setTxHash("pending on-chain (next PR)");
   };
 
   const handleJoin = () => {
     if (!joiningCode.trim()) return;
+    const signer = getSigner();
+    if (!signer || !publicKey) {
+      setError("Connect wallet before joining.");
+      return;
+    }
     const joined = {
       lobbyId: joiningCode.trim(),
       status: "waiting",
@@ -74,6 +91,7 @@ export function TheFarmLobby() {
     };
     setLobby(joined);
     setLobbyContext(joined.lobbyId, "player2");
+    setTxHash("pending on-chain (next PR)");
   };
 
   const setLobbyContext = (id: string, r: LobbyRole) => {
@@ -131,10 +149,20 @@ export function TheFarmLobby() {
               <div>Status: {lobby.status}</div>
               <div>Role: {role || "unassigned"}</div>
               <div>Floors — P1: {lobby.p1Floor} / P2: {lobby.p2Floor}</div>
+              {txHash && <div>Last tx: {txHash}</div>}
             </div>
           )}
+          {error && <div className="tf-panel__copy" style={{ color: "#ffb3a1" }}>{error}</div>}
         </div>
       </section>
     </StudioShell>
   );
+
+  function getSigner(): ContractSigner | null {
+    try {
+      return getContractSigner();
+    } catch {
+      return null;
+    }
+  }
 }

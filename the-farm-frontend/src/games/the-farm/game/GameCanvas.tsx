@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useLobbyContext } from "./LobbyContext";
+import { useWallet } from "@/hooks/useWallet";
 import "./gameCanvas.css";
 
 export function GameCanvas() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [locked, setLocked] = useState(false);
   const { lobbyId, role, p1Floor, p2Floor, setFloors, lastTxHash, setTxHash } = useLobbyContext();
+  const { getContractSigner, publicKey } = useWallet();
   const [attempts, setAttempts] = useState(0);
   const [result, setResult] = useState<string | null>(null);
 
@@ -28,14 +30,19 @@ export function GameCanvas() {
     }
   };
 
-  const attemptDoor = () => {
-    const success = Math.random() > 0.5;
+  const attemptDoor = async () => {
     setAttempts((a) => a + 1);
-    setResult(success ? "Door opens. Floor advanced." : "Trap sprung. Proof still submitted.");
-    setTxHash(`sim-${Date.now()}`);
-    if (success) {
-      setFloors(p1Floor + 1, p2Floor);
+    const signer = safeSigner();
+    if (!signer || !publicKey || !lobbyId) {
+      setResult("Connect wallet + lobby before attempting.");
+      return;
     }
+    // TODO: replace with real attempt_door call next PR
+    const success = Math.random() > 0.5;
+    const hash = `sim-${Date.now()}`;
+    setTxHash(hash);
+    setResult(success ? "Door opens. Floor advanced." : "Trap sprung. Proof still submitted.");
+    if (success) setFloors(p1Floor + 1, p2Floor);
     setTimeout(() => setResult(null), 2500);
   };
 
@@ -78,4 +85,12 @@ export function GameCanvas() {
       </div>
     </div>
   );
+
+  function safeSigner() {
+    try {
+      return getContractSigner();
+    } catch {
+      return null;
+    }
+  }
 }
