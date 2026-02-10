@@ -87,6 +87,14 @@
     text-align: center;
     gap: 10px;
 }
+.tf-hud-result {
+    margin-top: 8px;
+    color: #ffe2d7;
+    font-size: 12px;
+}
+.tf-hud-result--line {
+    color: #b6c8dd;
+}
 .tf-overlay-title {
     margin: 0;
     font-size: 16px;

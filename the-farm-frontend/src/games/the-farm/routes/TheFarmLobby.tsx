@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { StudioShell } from "./StudioShell";
 import { config } from "../../../config";
+import { useLobbyContext } from "../game/LobbyContext";
 import "./theFarmShell.css";
 
 type LobbySnapshot = {
@@ -14,6 +15,7 @@ type LobbySnapshot = {
 };
 
 export function TheFarmLobby() {
+  const { setLobby, lobbyId: ctxLobbyId, role } = useLobbyContext();
   const [lobby, setLobby] = useState<LobbySnapshot | null>(null);
   const [joiningCode, setJoiningCode] = useState("");
 
@@ -44,7 +46,7 @@ export function TheFarmLobby() {
   }, []);
 
   const handleCreate = () => {
-    setLobby({
+    const newLobby = {
       lobbyId: generatedLobby,
       status: "waiting",
       player1: "P1-connected",
@@ -52,12 +54,14 @@ export function TheFarmLobby() {
       p1Floor: 1,
       p2Floor: 0,
       createdAt: Date.now(),
-    });
+    };
+    setLobby(newLobby);
+    setLobbyContext(newLobby.lobbyId, "player1");
   };
 
   const handleJoin = () => {
     if (!joiningCode.trim()) return;
-    setLobby({
+    const joined = {
       lobbyId: joiningCode.trim(),
       status: "waiting",
       player1: "Host",
@@ -65,7 +69,13 @@ export function TheFarmLobby() {
       p1Floor: 1,
       p2Floor: 1,
       createdAt: Date.now(),
-    });
+    };
+    setLobby(joined);
+    setLobbyContext(joined.lobbyId, "player2");
+  };
+
+  const setLobbyContext = (id: string, r: LobbyRole) => {
+    setLobby(id, r);
   };
 
   return (
@@ -115,8 +125,9 @@ export function TheFarmLobby() {
           </div>
           {lobby && (
             <div className="tf-lobby__state">
-              <div>Lobby: {lobby.lobbyId}</div>
+              <div>Lobby: {ctxLobbyId || lobby.lobbyId}</div>
               <div>Status: {lobby.status}</div>
+              <div>Role: {role || "unassigned"}</div>
               <div>Floors — P1: {lobby.p1Floor} / P2: {lobby.p2Floor}</div>
             </div>
           )}

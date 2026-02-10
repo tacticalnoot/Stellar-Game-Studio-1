@@ -1,10 +1,20 @@
 import { Link, useNavigate } from "react-router-dom";
 import { StudioShell } from "./StudioShell";
 import { config } from "../../../config";
+import { useLobbyContext } from "../game/LobbyContext";
 import "./theFarmShell.css";
 
 export function TheFarmPlay() {
   const navigate = useNavigate();
+  const { setLobby } = useLobbyContext();
+
+  const quickCreate = () => {
+    const lobbyId = `L${Math.floor(Date.now() % 1_000_000)
+      .toString()
+      .padStart(6, "0")}`;
+    setLobby(lobbyId, "player1");
+    navigate("/the-farm/lobby");
+  };
 
   return (
     <StudioShell tone="glass">
@@ -16,7 +26,7 @@ export function TheFarmPlay() {
             Spin up a lobby, sync two wallets, drop into the dungeon. Testnet only — on-chain every attempt.
           </p>
           <div className="tf-launcher__actions">
-            <button className="tf-button tf-button--primary" onClick={() => navigate("/the-farm/lobby")}>
+            <button className="tf-button tf-button--primary" onClick={quickCreate}>
               CREATE LOBBY
             </button>
             <button className="tf-button tf-button--ghost" onClick={() => navigate("/the-farm/lobby")}>

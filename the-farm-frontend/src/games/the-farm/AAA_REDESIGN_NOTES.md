@@ -93,4 +93,25 @@ Scope: `Stellar-Game-Studio-1` fork — frontend lives in `the-farm-frontend/`, 
   - Bun not installed on host; need Bun for canonical `bun run` scripts.
 - Judge impression score (1–10): 6.8 — more alive, still needs real data + fullscreen canvas.
 - Next PR:
-  - PR-3: Fullscreen game canvas + HUD shell, start mounting Three.js/controls, and prep worker lane stub.
+- PR-3: Fullscreen game canvas + HUD shell, start mounting Three.js/controls, and prep worker lane stub.
+
+## PR-4 — Lobby→Game state + attempt scaffold
+- Goals:
+  - Carry lobby identity/role into the game route and show it in HUD.
+  - Provide a visible attempt action (simulated for now) so the game route is interactive, not just a shell.
+  - Add a shared lobby context to prep for real service wiring.
+- Changes:
+  - Added LobbyContext provider to share lobbyId/role/floors/txHash.
+  - Play route quick-creates a lobby and jumps to lobby; lobby create/join now populates context and shows live-ish state.
+  - Game route HUD shows lobby/role/floors and includes a simulated “submit attempt” with result banner and pointer-lock CTA.
+  - Fullscreen canvas remains ready for Three.js; overlay copy explicitly calls out simulation until contract wiring lands.
+- Runbook:
+  - `npm install` (Bun still needed for canonical scripts).
+  - `npm run dev` → `/the-farm/play` → create lobby → lobby shows IDs → go `/the-farm/game` and click canvas to lock pointer; hit “SUBMIT ATTEMPT (SIM)” to see HUD feedback.
+- Known issues:
+  - Contract bindings in repo target an older template; real contract wiring pending (will require regenerating bindings for `contracts/the-farm`).
+  - Bun not installed locally; blocks `bun run setup` flow.
+  - Attempt action is simulated; no on-chain tx yet.
+- Judge impression score (1–10): 7.1 — interactive shell, but still needs real RPC/attempts and 3D scene.
+- Next PR:
+  - PR-5: Regenerate bindings for `contracts/the-farm`, wire real create/join/attempt via theFarmService, and surface tx hashes/events in HUD + status.
