@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLobbyContext } from "./LobbyContext";
 import { useWallet } from "@/hooks/useWallet";
 import { attemptDoor as apiAttemptDoor } from "../theFarmApi";
+import { initScene, disposeScene } from "./threeScene";
 import "./gameCanvas.css";
 
 function explorerUrl(hash: string) {
@@ -21,12 +22,19 @@ export function GameCanvas() {
   useEffect(() => {
     const el = canvasRef.current;
     if (!el) return;
+    const cleanup = initScene(el);
     const handleLockChange = () => {
       const doc: any = document;
       setLocked(doc.pointerLockElement === el);
     };
     document.addEventListener("pointerlockchange", handleLockChange);
     return () => document.removeEventListener("pointerlockchange", handleLockChange);
+  }, []);
+
+  useEffect(() => {
+    const el = canvasRef.current;
+    if (!el) return;
+    return () => disposeScene(el);
   }, []);
 
   const requestLock = () => {
