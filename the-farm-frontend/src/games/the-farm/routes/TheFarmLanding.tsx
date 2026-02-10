@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { StudioShell } from "./StudioShell";
+import { FLOOR_DESIGNS } from "../lore/floors";
 import "./theFarmShell.css";
 
 export function TheFarmLanding() {
@@ -101,6 +102,16 @@ export function TheFarmLanding() {
           <Link to="/the-farm/press" className="tf-link">
             Download →
           </Link>
+        </div>
+        <div className="tf-footer-card">
+          <p className="tf-footer-label">THE TEN FLOORS</p>
+          <ul className="tf-list">
+            {FLOOR_DESIGNS.map((f) => (
+              <li key={f.id}>
+                Floor {f.id}: {f.title} — {f.miniGame}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </StudioShell>

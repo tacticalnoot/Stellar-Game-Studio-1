@@ -168,3 +168,18 @@ Scope: `Stellar-Game-Studio-1` fork — frontend lives in `the-farm-frontend/`, 
 - Judge impression score (1–10): 7.7 — clearer intent, still needs real proofs/events.
 - Next PR:
   - Swap worker to real Noir/Circom/RISC0 proofs, bind commit to proof, surface hub events.
+
+## PR-11 — Lore + per-floor mini-game map
+- Goals:
+  - Give every floor a distinct multiplayer mini-game tied to its proof stack (Circom → Noir → RISC0 → mixed).
+  - Maintain subtle in-world language while ensuring clarity.
+- Changes:
+  - Added `lore/floors.ts` listing titles, stack, co-op, mini-game concept, player arc, and copy for all 10 floors.
+  - Landing footer now shows “THE TEN FLOORS” list for fast context.
+- Runbook:
+  - `bun run dev`, open `/the-farm` footer to view the floor map.
+- Known issues:
+  - Mini-games not yet mechanically bound to runtime; proofs still stub; hub events still missing.
+- Judge impression score (1–10): 8.0 — lore depth improved; mechanics + proofs still pending.
+- Next PR:
+  - Bind mini-games to mechanics, replace stub worker with real circuits per stack, and surface hub events.
