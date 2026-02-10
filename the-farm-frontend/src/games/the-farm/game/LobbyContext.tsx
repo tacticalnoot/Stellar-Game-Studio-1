@@ -9,9 +9,11 @@ export type LobbyContextState = {
   p2Floor: number;
   lastTxHash: string | null;
   attemptNonce: number;
+  commitTxHash: string | null;
   setLobby: (id: string, role: LobbyRole) => void;
   setFloors: (p1: number, p2: number) => void;
   setTxHash: (hash: string | null) => void;
+  setCommitHash: (hash: string | null) => void;
   bumpNonce: () => void;
 };
 
@@ -24,6 +26,7 @@ export function LobbyProvider({ children }: { children: React.ReactNode }) {
   const [p2Floor, setP2] = useState(0);
   const [lastTxHash, setLastTx] = useState<string | null>(null);
   const [attemptNonce, setAttemptNonce] = useState(0);
+  const [commitTxHash, setCommitTx] = useState<string | null>(null);
 
   const setLobby = (id: string, r: LobbyRole) => {
     setLobbyId(id);
@@ -34,11 +37,25 @@ export function LobbyProvider({ children }: { children: React.ReactNode }) {
     setP2(p2);
   };
   const setTxHash = (hash: string | null) => setLastTx(hash);
+  const setCommitHash = (hash: string | null) => setCommitTx(hash);
   const bumpNonce = () => setAttemptNonce((n) => n + 1);
 
   return (
     <LobbyContext.Provider
-      value={{ lobbyId, role, p1Floor, p2Floor, lastTxHash, attemptNonce, setLobby, setFloors, setTxHash, bumpNonce }}
+      value={{
+        lobbyId,
+        role,
+        p1Floor,
+        p2Floor,
+        lastTxHash,
+        attemptNonce,
+        commitTxHash,
+        setLobby,
+        setFloors,
+        setTxHash,
+        setCommitHash,
+        bumpNonce,
+      }}
     >
       {children}
     </LobbyContext.Provider>

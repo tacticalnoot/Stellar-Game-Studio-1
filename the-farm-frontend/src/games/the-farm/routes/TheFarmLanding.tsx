@@ -8,9 +8,9 @@ export function TheFarmLanding() {
       <section className="tf-hero">
         <div className="tf-hero__text">
           <p className="tf-kicker">新章 · オンライン · TESTNET</p>
-          <h2 className="tf-title">THE FARM: STELLAR ZK DUNGEON</h2>
+          <h2 className="tf-title">THE FARM: STELLAR DUNGEON</h2>
           <p className="tf-subtitle">
-            Two-player descent. Every rune choice is an on-chain ZK attempt. Only truth opens the door.
+            Two-player descent. Every rune choice is sealed on-chain; only the honest signal opens the door.
           </p>
           <div className="tf-cta-row">
             <Link to="/the-farm/play" className="tf-button tf-button--primary">
@@ -26,7 +26,7 @@ export function TheFarmLanding() {
           <div className="tf-pills">
             <span className="tf-pill">2-PLAYER LIVE</span>
             <span className="tf-pill tf-pill--amber">TESTNET BUILD</span>
-            <span className="tf-pill tf-pill--mint">ZK VERIFIED (SOON)</span>
+            <span className="tf-pill tf-pill--mint">SEALED RUNS</span>
           </div>
         </div>
         <div className="tf-hero__viz">

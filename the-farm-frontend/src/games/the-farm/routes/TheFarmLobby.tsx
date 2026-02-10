@@ -116,7 +116,7 @@ export function TheFarmLobby() {
           <p className="tf-panel__label">Lobby Console</p>
           <h3 className="tf-panel__title">Create or join</h3>
           <p className="tf-panel__copy">
-            P1 spins a lobby; P2 enters code. Commitments lock before the run. Hub call: start_game() when both are ready.
+            P1 spins a lobby; P2 enters code. Secrets lock before the run; the hub opens once both are ready.
           </p>
           <div className="tf-lobby__actions">
             <button className="tf-button tf-button--primary" onClick={handleCreate}>
@@ -144,7 +144,7 @@ export function TheFarmLobby() {
           <p className="tf-panel__label">Presence</p>
           <h3 className="tf-panel__title">Ghost beacons</h3>
           <p className="tf-panel__copy">
-            Chain-authoritative progress will render here. Until RPC wiring, we mirror a live-ish heartbeat so the UI never feels dead.
+            Chain-authoritative progress renders here. A heartbeat keeps the room alive while we wait for the next seal.
           </p>
           <div className="tf-status-row">
             <span className="tf-pill tf-pill--amber">

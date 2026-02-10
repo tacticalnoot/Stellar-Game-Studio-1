@@ -23,7 +23,7 @@ export function TheFarmPlay() {
           <p className="tf-kicker">SESSION</p>
           <h2 className="tf-title">Launch Sequence</h2>
           <p className="tf-subtitle">
-            Spin up a lobby, sync two wallets, drop into the dungeon. Testnet only — on-chain every attempt.
+            Spin up a lobby, sync two wallets, drop into the dungeon. Testnet only — every pick is sealed to the ledger.
           </p>
           <div className="tf-launcher__actions">
             <button className="tf-button tf-button--primary" onClick={quickCreate}>

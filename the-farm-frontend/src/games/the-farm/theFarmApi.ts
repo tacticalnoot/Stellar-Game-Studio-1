@@ -84,3 +84,19 @@ export async function attemptDoor(
   const sent = await tx.signAndSend();
   return { hash: sent.hash };
 }
+
+export async function setCommit(
+  lobbyId: number,
+  commit: Buffer,
+  player: string,
+  signer: Pick<contract.ClientOptions, "signTransaction">
+) {
+  const client = signingClient(player, signer);
+  const tx = await client.set_commit(
+    { lobby_id: lobbyId, commit },
+    DEFAULT_METHOD_OPTIONS
+  );
+  await tx.simulate();
+  const sent = await tx.signAndSend();
+  return { hash: sent.hash };
+}

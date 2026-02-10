@@ -3,6 +3,7 @@ import { useLobbyContext } from "./LobbyContext";
 import { useWallet } from "@/hooks/useWallet";
 import { attemptDoor as apiAttemptDoor } from "../theFarmApi";
 import { initScene, disposeScene } from "./threeScene";
+import { CommitState } from "./CommitState";
 import "./gameCanvas.css";
 
 function explorerUrl(hash: string) {
@@ -98,8 +99,7 @@ export function GameCanvas() {
         <div className="tf-overlay">
           <p className="tf-overlay-title">ENTERING DUNGEON</p>
           <p className="tf-overlay-copy">
-            This shell will host the Three.js scene and WebWorker proving lane in upcoming PRs. Pointer lock is wired.
-            Attempts here simulate on-chain calls; next PR swaps to real contract flow.
+            Pointer lock engaged; your moves are sealed to the ledger without breaking immersion. Keep it smooth, keep it honest.
           </p>
           <button className="tf-button tf-button--primary" onClick={requestLock}>
             {locked ? "LOCKED" : "CLICK TO LOCK + START"}
