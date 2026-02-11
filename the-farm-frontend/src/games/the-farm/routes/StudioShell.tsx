@@ -13,9 +13,10 @@ const NAV_LINKS = [
 type StudioShellProps = {
   children: React.ReactNode;
   tone?: "dark" | "glass";
+  hideNav?: boolean;
 };
 
-export function StudioShell({ children, tone = "dark" }: StudioShellProps) {
+export function StudioShell({ children, tone = "dark", hideNav = false }: StudioShellProps) {
   const { pathname } = useLocation();
 
   return (
@@ -24,35 +25,37 @@ export function StudioShell({ children, tone = "dark" }: StudioShellProps) {
         <div className="tf-shell__grid" />
         <div className="tf-shell__runes" />
       </div>
-      <header className="tf-shell__nav">
-        <div className="tf-shell__brand">
-          <span className="tf-shell__brand-mark">⚔️</span>
-          <div>
-            <p className="tf-shell__brand-overline">Stellar ZK Studio</p>
-            <h1 className="tf-shell__brand-title">THE FARM</h1>
+      {!hideNav && (
+        <header className="tf-shell__nav">
+          <div className="tf-shell__brand">
+            <span className="tf-shell__brand-mark">⚔️</span>
+            <div>
+              <p className="tf-shell__brand-overline">Stellar ZK Studio</p>
+              <h1 className="tf-shell__brand-title">THE FARM</h1>
+            </div>
           </div>
-        </div>
-        <nav className="tf-shell__links">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={
-                (link.to === "/" ? pathname === "/" : pathname.startsWith(link.to))
-                  ? "tf-shell__link tf-shell__link--active"
-                  : "tf-shell__link"
-              }
-            >
-              {link.label}
+          <nav className="tf-shell__links">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={
+                  (link.to === "/" ? pathname === "/" : pathname.startsWith(link.to))
+                    ? "tf-shell__link tf-shell__link--active"
+                    : "tf-shell__link"
+                }
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="tf-shell__cta">
+            <Link to="/play" className="tf-button tf-button--primary">
+              PLAY NOW
             </Link>
-          ))}
-        </nav>
-        <div className="tf-shell__cta">
-          <Link to="/play" className="tf-button tf-button--primary">
-            PLAY NOW
-          </Link>
-        </div>
-      </header>
+          </div>
+        </header>
+      )}
       <main className="tf-shell__content">{children}</main>
     </div>
   );
