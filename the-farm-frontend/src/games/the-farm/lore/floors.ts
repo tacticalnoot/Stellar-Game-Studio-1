@@ -8,6 +8,7 @@ export type FloorDesign = {
   playerArc: string;
   copy: string;
   question: string;
+  hint?: string;
   options: { label: string; text: string }[];
   correctOptionIndex: number;
 };
@@ -23,6 +24,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "You learn to act fast under scrutiny, defining your call-sign.",
     copy: "Your manifest must be sealed; the checkpoint AI only respects clean stencils.",
     question: "The scanner demands a declaration of intent. Which rune matches the customs seal?",
+    hint: "Hint: look for the option that signals lawful trade, not force.",
     options: [
       { label: "A", text: "The Broken Oar (Illicit)" },
       { label: "B", text: "The Gilded Scale (Merchant)" },
@@ -41,6 +43,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "You realize honesty is an accelerator when the ledger is the judge.",
     copy: "Scales hum; only truthful weight unlocks the lift.",
     question: "Your cargo is heavier than declared. How do you balance the scales?",
+    hint: "Hint: calibration beats concealment.",
     options: [
       { label: "A", text: "Bribe the sensor ghost" },
       { label: "B", text: "Jettison the fuel reserves" },
@@ -59,6 +62,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "You start treating each attempt as part of your legend, not a mistake.",
     copy: "Notary lights flicker as your entry etches into stone.",
     question: "The ledger requires a checksum to timestamp your arrival. Input the sequence:",
+    hint: "Hint: the ledger certifies what exists now, not later.",
     options: [
       { label: "A", text: "Alpha-9-Zulu (Current Block)" },
       { label: "B", text: "Omega-0-Void (Future)" },
@@ -77,6 +81,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "You learn that cadence and intent outweigh volume.",
     copy: "The mirror remembers tone, not words.",
     question: "The mirror reflects your true self. What do you whisper to pass?",
+    hint: "Hint: intent outranks ego.",
     options: [
       { label: "A", text: "I seek power." },
       { label: "B", text: "I fear nothing." },
@@ -95,6 +100,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "Trust forms; your partner becomes part of your toolkit.",
     copy: "Two turns, one gate; harmony or halt.",
     question: "A dual-key system. You must turn your key in sync with your partner. When?",
+    hint: "Hint: the lock rewards simultaneous consent.",
     options: [
       { label: "A", text: "Before they signal" },
       { label: "B", text: "On the heartbeat (Sync)" },
@@ -113,6 +119,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "You master planning under secrecy.",
     copy: "Mission control only needs your checksum.",
     question: "The map shifts. You need to commit to a path without revealing it. Draw your vector:",
+    hint: "Hint: the puzzle rewards deliberate structure.",
     options: [
       { label: "A", text: "North-North-West (The Shortcut)" },
       { label: "B", text: "East-South-East (The Scenic Route)" },
@@ -131,6 +138,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "Precision over force; your confidence hardens.",
     copy: "Engines purr when truth is on key.",
     question: "The engine hums a specific frequency. Match the pitch to stabilize the lift.",
+    hint: "Hint: align with the target resonance.",
     options: [
       { label: "A", text: "432 Hz (Natural)" },
       { label: "B", text: "440 Hz (Standard)" },
@@ -149,6 +157,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "You entrust work to the machine and accept the delay of heavy proof.",
     copy: "The furnace signs your attempt; the bridge lowers only for the right alloy.",
     question: "Input the raw ore. The furnace needs the correct alloy mix ratio.",
+    hint: "Hint: the right recipe is balanced, not arbitrary.",
     options: [
       { label: "A", text: "75% Iron, 25% Carbon" },
       { label: "B", text: "90% Copper, 10% Tin" },
@@ -167,6 +176,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "You reconcile memory with evidence; discipline peaks.",
     copy: "The recorder believes only what it signs.",
     question: "Relive your past moves. The simulation runs fast. When do you hit the brakes?",
+    hint: "Hint: precision timing beats panic.",
     options: [
       { label: "A", text: "Before the crash" },
       { label: "B", text: "At the event horizon (Precision)" },
@@ -185,6 +195,7 @@ export const FLOOR_DESIGNS: FloorDesign[] = [
     playerArc: "You and your rival-ally conclude the saga: respect through evidence.",
     copy: "All seals converge; the Archive crowns the one who braids cleanest.",
     question: "The final seal. Merge your proof with your partner's. Bind the contract.",
+    hint: "Hint: cooperation is the only valid closeout.",
     options: [
       { label: "A", text: "Submit alone" },
       { label: "B", text: "Overwrite their signature" },

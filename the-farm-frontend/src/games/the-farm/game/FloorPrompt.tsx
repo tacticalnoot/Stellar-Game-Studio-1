@@ -3,7 +3,7 @@ import { FLOOR_DESIGNS } from "../lore/floors";
 
 type FloorPromptProps = {
     floor: number;
-    onAttempt: (isCorrect: boolean) => void;
+    onAttempt: (choiceIndex: number, isCorrect: boolean) => void;
     busy: boolean;
 };
 
@@ -26,13 +26,14 @@ export function FloorPrompt({ floor, onAttempt, busy }: FloorPromptProps) {
 
             <div className="tf-prompt-challenge">
                 <p className="tf-prompt-question">{design.question}</p>
+                {design.hint && <p className="tf-prompt-copy">Hint: {design.hint}</p>}
                 <div className="tf-prompt-options">
                     {design.options.map((opt, idx) => (
                         <button
                             key={idx}
                             className="tf-option-btn"
                             disabled={busy}
-                            onClick={() => onAttempt(idx === design.correctOptionIndex)}
+                            onClick={() => onAttempt(idx, idx === design.correctOptionIndex)}
                         >
                             <div className="tf-option-label">{opt.label}</div>
                             <div className="tf-option-text">{opt.text}</div>
