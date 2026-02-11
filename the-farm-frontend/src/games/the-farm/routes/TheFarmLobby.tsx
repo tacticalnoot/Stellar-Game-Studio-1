@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { StudioShell } from "./StudioShell";
 import { config } from "../../../config";
 import { useLobbyContext } from "../game/LobbyContext";
+import type { LobbyRole } from "../game/LobbyContext";
 import { useWallet } from "@/hooks/useWallet";
 import type { ContractSigner } from "@/types/signer";
 import { fetchLobby, createLobby as apiCreateLobby, joinLobby as apiJoinLobby } from "../theFarmApi";
@@ -22,7 +23,7 @@ type LobbySnapshot = {
 export function TheFarmLobby() {
   const { setLobby, lobbyId: ctxLobbyId, role } = useLobbyContext();
   const { getContractSigner, publicKey, walletType } = useWallet();
-  const [lobby, setLobby] = useState<LobbySnapshot | null>(null);
+  const [lobby, setLobbyState] = useState<LobbySnapshot | null>(null);
   const [joiningCode, setJoiningCode] = useState("");
   const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -38,9 +39,14 @@ export function TheFarmLobby() {
         fetchLobby(Number(ctxLobbyId.replace("L", "")))
           .then((chainLobby) => {
             if (!chainLobby) return;
-            setLobby({
+            setLobbyState({
               lobbyId: ctxLobbyId,
-              status: chainLobby.status.tag === "Active" ? "active" : chainLobby.status.tag === "Finished" ? "finished" : "waiting",
+              status:
+                chainLobby.status.tag === "Active"
+                  ? "active"
+                  : chainLobby.status.tag === "Finished"
+                  ? "finished"
+                  : "waiting",
               player1: chainLobby.player1,
               player2: chainLobby.player2 ?? undefined,
               p1Floor: chainLobby.p1.floor,
@@ -69,7 +75,7 @@ export function TheFarmLobby() {
       p2Floor: 0,
       createdAt: Date.now(),
     };
-    setLobby(newLobby);
+    setLobbyState(newLobby);
     setLobbyContext(newLobby.lobbyId, "player1");
     try {
       const res = await apiCreateLobby(publicKey, signer);
@@ -95,7 +101,7 @@ export function TheFarmLobby() {
       p2Floor: 1,
       createdAt: Date.now(),
     };
-    setLobby(joined);
+    setLobbyState(joined);
     setLobbyContext(joined.lobbyId, "player2");
     try {
       const res = await apiJoinLobby(Number(joiningCode.replace("L", "")), publicKey, signer);

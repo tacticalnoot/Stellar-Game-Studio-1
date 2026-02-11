@@ -1,6 +1,6 @@
-import { Client } from "../../../bindings/the_farm/src/index";
+import { Client } from "../../bindings/the_farm/src/index";
 import { NETWORK_PASSPHRASE, RPC_URL, DEFAULT_METHOD_OPTIONS } from "@/utils/constants";
-import type { contract } from "@stellar/stellar-sdk/contract";
+import type { contract } from "@stellar/stellar-sdk";
 import { Buffer } from "buffer";
 
 const contractId = import.meta.env.VITE_THE_FARM_CONTRACT_ID;
@@ -11,10 +11,10 @@ const readonlyClient = new Client({
   rpcUrl: RPC_URL,
 });
 
-function signingClient(
-  publicKey: string,
-  signer: Pick<contract.ClientOptions, "signTransaction" | "signAuthEntry">
-) {
+type Signer = Pick<contract.ClientOptions, "signTransaction"> &
+  Partial<Pick<contract.ClientOptions, "signAuthEntry">>;
+
+function signingClient(publicKey: string, signer: Signer) {
   return new Client({
     contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
@@ -33,10 +33,7 @@ export async function fetchLobby(lobbyId: number) {
   return null;
 }
 
-export async function createLobby(
-  player: string,
-  signer: Pick<contract.ClientOptions, "signTransaction">
-) {
+export async function createLobby(player: string, signer: Signer) {
   const client = signingClient(player, signer);
   const tx = await client.create_lobby({ player1: player }, DEFAULT_METHOD_OPTIONS);
   const sim = await tx.simulate();
@@ -45,11 +42,7 @@ export async function createLobby(
   return { lobbyId: sim.result.unwrap(), hash: sent.hash };
 }
 
-export async function joinLobby(
-  lobbyId: number,
-  player: string,
-  signer: Pick<contract.ClientOptions, "signTransaction">
-) {
+export async function joinLobby(lobbyId: number, player: string, signer: Signer) {
   const client = signingClient(player, signer);
   const tx = await client.join_lobby(
     { lobby_id: lobbyId, player2: player },
@@ -65,9 +58,8 @@ export async function attemptDoor(
   floor: number,
   nonce: number,
   player: string,
-  proof: Buffer = Buffer.alloc(0),
-  publicInputs: Buffer = Buffer.alloc(0),
-  signer: Pick<contract.ClientOptions, "signTransaction">
+  isCorrect: boolean,
+  signer: Signer
 ) {
   const client = signingClient(player, signer);
   const tx = await client.attempt_door(
@@ -75,22 +67,17 @@ export async function attemptDoor(
       lobby_id: lobbyId,
       floor,
       attempt_nonce: nonce,
-      proof,
-      public_inputs: publicInputs,
+      is_correct: isCorrect,
     },
     DEFAULT_METHOD_OPTIONS
   );
+
   await tx.simulate();
   const sent = await tx.signAndSend();
   return { hash: sent.hash };
 }
 
-export async function setCommit(
-  lobbyId: number,
-  commit: Buffer,
-  player: string,
-  signer: Pick<contract.ClientOptions, "signTransaction">
-) {
+export async function setCommit(lobbyId: number, commit: Buffer, player: string, signer: Signer) {
   const client = signingClient(player, signer);
   const tx = await client.set_commit(
     { lobby_id: lobbyId, commit },

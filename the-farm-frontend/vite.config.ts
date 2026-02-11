@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
+  base: '/labs/the-farm/client/',
   plugins: [react()],
   // Load .env files from the parent directory (repo root)
   envDir: '..',

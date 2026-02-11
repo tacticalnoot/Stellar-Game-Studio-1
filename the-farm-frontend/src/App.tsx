@@ -10,17 +10,17 @@ import { LobbyProvider } from "./games/the-farm/game/LobbyContext";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/labs/the-farm/client">
       <LobbyProvider>
         <Routes>
-          <Route path="/the-farm" element={<TheFarmLanding />} />
-          <Route path="/the-farm/play" element={<TheFarmPlay />} />
-          <Route path="/the-farm/lobby" element={<TheFarmLobby />} />
-          <Route path="/the-farm/devlog" element={<TheFarmDevlog />} />
-          <Route path="/the-farm/status" element={<TheFarmStatus />} />
-          <Route path="/the-farm/press" element={<TheFarmPress />} />
-          <Route path="/the-farm/game" element={<TheFarmGameRoute />} />
-          <Route path="*" element={<Navigate to="/the-farm" replace />} />
+          <Route path="/" element={<TheFarmLanding />} />
+          <Route path="/play" element={<TheFarmPlay />} />
+          <Route path="/lobby" element={<TheFarmLobby />} />
+          <Route path="/devlog" element={<TheFarmDevlog />} />
+          <Route path="/status" element={<TheFarmStatus />} />
+          <Route path="/press" element={<TheFarmPress />} />
+          <Route path="/game" element={<TheFarmGameRoute />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </LobbyProvider>
     </BrowserRouter>

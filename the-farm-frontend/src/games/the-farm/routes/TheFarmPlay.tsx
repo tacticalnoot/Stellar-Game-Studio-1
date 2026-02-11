@@ -13,7 +13,7 @@ export function TheFarmPlay() {
       .toString()
       .padStart(6, "0")}`;
     setLobby(lobbyId, "player1");
-    navigate("/the-farm/lobby");
+    navigate("/lobby");
   };
 
   return (
@@ -29,10 +29,10 @@ export function TheFarmPlay() {
             <button className="tf-button tf-button--primary" onClick={quickCreate}>
               CREATE LOBBY
             </button>
-            <button className="tf-button tf-button--ghost" onClick={() => navigate("/the-farm/lobby")}>
+            <button className="tf-button tf-button--ghost" onClick={() => navigate("/lobby")}>
               JOIN WITH CODE
             </button>
-            <Link to="/the-farm/game" className="tf-button tf-button--line">
+            <Link to="/game" className="tf-button tf-button--line">
               ENTER FULLSCREEN
             </Link>
           </div>

@@ -2,12 +2,12 @@ import { Link, useLocation } from "react-router-dom";
 import "./theFarmShell.css";
 
 const NAV_LINKS = [
-  { to: "/the-farm", label: "Home" },
-  { to: "/the-farm/play", label: "Play" },
-  { to: "/the-farm/lobby", label: "Lobby" },
-  { to: "/the-farm/devlog", label: "Devlog" },
-  { to: "/the-farm/status", label: "Status" },
-  { to: "/the-farm/press", label: "Press Kit" },
+  { to: "/", label: "Home" },
+  { to: "/play", label: "Play" },
+  { to: "/lobby", label: "Lobby" },
+  { to: "/devlog", label: "Devlog" },
+  { to: "/status", label: "Status" },
+  { to: "/press", label: "Press Kit" },
 ];
 
 type StudioShellProps = {
@@ -38,7 +38,7 @@ export function StudioShell({ children, tone = "dark" }: StudioShellProps) {
               key={link.to}
               to={link.to}
               className={
-                pathname.startsWith(link.to)
+                (link.to === "/" ? pathname === "/" : pathname.startsWith(link.to))
                   ? "tf-shell__link tf-shell__link--active"
                   : "tf-shell__link"
               }
@@ -48,7 +48,7 @@ export function StudioShell({ children, tone = "dark" }: StudioShellProps) {
           ))}
         </nav>
         <div className="tf-shell__cta">
-          <Link to="/the-farm/play" className="tf-button tf-button--primary">
+          <Link to="/play" className="tf-button tf-button--primary">
             PLAY NOW
           </Link>
         </div>

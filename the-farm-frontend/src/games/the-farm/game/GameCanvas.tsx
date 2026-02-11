@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { FloorPrompt } from "./FloorPrompt";
 import { useLobbyContext } from "./LobbyContext";
 import { useWallet } from "@/hooks/useWallet";
 import { attemptDoor as apiAttemptDoor } from "../theFarmApi";
@@ -14,18 +15,26 @@ function explorerUrl(hash: string) {
 }
 
 export function GameCanvas() {
+  const { lobbyId, role } = useLobbyContext();
+  const { publicKey, getContractSigner } = useWallet();
   const canvasRef = useRef<HTMLDivElement>(null);
+
   const [locked, setLocked] = useState(false);
-  const { lobbyId, role, p1Floor, p2Floor, setFloors, lastTxHash, setTxHash, attemptNonce, bumpNonce } =
-    useLobbyContext();
-  const { getContractSigner, publicKey } = useWallet();
+  const [p1Floor, setP1Floor] = useState(1);
+  const [p2Floor, setP2Floor] = useState(1);
   const [attempts, setAttempts] = useState(0);
   const [result, setResult] = useState<string | null>(null);
+  const [lastTxHash, setTxHash] = useState<string | null>(null);
   const [attemptError, setAttemptError] = useState<string | null>(null);
-  const [workerReady, setWorkerReady] = useState(true);
-  const [proofBusy, setProofBusy] = useState(false);
+  const [attemptNonce, setAttemptNonce] = useState(0);
+  const [isPolling, setIsPolling] = useState(false);
 
-  const workerRef = useRef<Worker | null>(null);
+  const setFloors = (p1: number, p2: number) => {
+    setP1Floor(p1);
+    setP2Floor(p2);
+  };
+
+  const bumpNonce = () => setAttemptNonce((n) => n + 1);
 
   useEffect(() => {
     const el = canvasRef.current;
@@ -36,21 +45,34 @@ export function GameCanvas() {
       setLocked(doc.pointerLockElement === el);
     };
     document.addEventListener("pointerlockchange", handleLockChange);
-    return () => document.removeEventListener("pointerlockchange", handleLockChange);
+    return () => {
+      document.removeEventListener("pointerlockchange", handleLockChange);
+      cleanup();
+    };
   }, []);
 
+  // Poll for chain state updates
   useEffect(() => {
-    const el = canvasRef.current;
-    if (!el) return;
-    return () => disposeScene(el);
-  }, []);
-
-  useEffect(() => {
-    const w: Worker = new ZkWorker();
-    workerRef.current = w;
-    setWorkerReady(true);
-    return () => w.terminate();
-  }, []);
+    if (!lobbyId) return;
+    const id = Number(lobbyId.replace("L", ""));
+    const timer = setInterval(() => {
+      fetchLobby(id)
+        .then((l) => {
+          if (l) {
+            setFloors(l.p1.floor, l.p2.floor);
+            // If we are P1, check if our floor advanced
+            if (role === "player1" && l.p1.floor > p1Floor) {
+              setResult(null); // Clear previous result
+            }
+            if (role === "player2" && l.p2.floor > p2Floor) {
+              setResult(null);
+            }
+          }
+        })
+        .catch(() => { });
+    }, 2000);
+    return () => clearInterval(timer);
+  }, [lobbyId, role, p1Floor, p2Floor, setFloors]);
 
   const requestLock = () => {
     const el = canvasRef.current;
@@ -60,7 +82,7 @@ export function GameCanvas() {
     }
   };
 
-  const attemptDoor = async () => {
+  const attemptDoor = async (isCorrectOption: boolean) => {
     setAttempts((a) => a + 1);
     const signer = safeSigner();
     if (!signer || !publicKey || !lobbyId) {
@@ -69,27 +91,22 @@ export function GameCanvas() {
     }
     setAttemptError(null);
     try {
-      setProofBusy(true);
-      const proofPayload = await runProofWorker();
-      setProofBusy(false);
+      setResult("Signing attempt...");
       const res = await apiAttemptDoor(
         Number(lobbyId.replace("L", "")),
-        p1Floor,
+        role === "player1" ? p1Floor : p2Floor,
         attemptNonce + 1,
         publicKey,
-        proofPayload.proof,
-        proofPayload.publicInputs,
+        isCorrectOption,
         signer
       );
       setTxHash(res.hash);
       bumpNonce();
-      // Assume success until poll catches floor
-      setResult("Attempt submitted on-chain. Awaiting ledger.");
+      setResult("Attempt submitted. Waiting for ledger...");
     } catch (e: any) {
       setAttemptError(e?.message || "Attempt failed");
       setResult("Attempt failed");
     }
-    setTimeout(() => setResult(null), 2500);
   };
 
   return (
@@ -109,6 +126,9 @@ export function GameCanvas() {
             <div className="tf-hud-chip tf-hud-chip--line">
               Stack: {floorProofPlan[p1Floor] || "mixed"}
             </div>
+            <div className="tf-hud-chip tf-hud-chip--line">
+              Last Tx: {lastTxHash ? lastTxHash.slice(0, 8) + '...' : 'None'}
+            </div>
           </div>
           <div className="tf-hud-right">
             <div className="tf-hud-chip tf-hud-chip--line">Lobby: {lobbyId || "unset"}</div>
@@ -116,25 +136,20 @@ export function GameCanvas() {
             <div className="tf-hud-chip tf-hud-chip--line">Pointer lock: {locked ? "ON" : "Click to lock"}</div>
           </div>
         </div>
-        <div className="tf-overlay">
-          <p className="tf-overlay-title">ENTERING DUNGEON</p>
-          <p className="tf-overlay-copy">
-            Pointer lock engaged; your moves are sealed to the ledger without breaking immersion. Keep it smooth, keep it honest.
-          </p>
-          <button className="tf-button tf-button--primary" onClick={requestLock}>
-            {locked ? "LOCKED" : "CLICK TO LOCK + START"}
-          </button>
-          <button className="tf-button tf-button--ghost" onClick={attemptDoor}>
-            {proofBusy ? "FORGING…" : "SUBMIT ATTEMPT"}
-          </button>
-          {result && <div className="tf-hud-result">{result}</div>}
-          {lastTxHash && (
-            <div className="tf-hud-result tf-hud-result--line">
-              tx: <a href={explorerUrl(lastTxHash)} target="_blank" rel="noreferrer">{lastTxHash}</a>
-            </div>
-          )}
-          {attemptError && <div className="tf-hud-result tf-hud-result--line" style={{ color: "#ffb3a1" }}>{attemptError}</div>}
+
+        <div className="tf-overlay-content">
+          <FloorPrompt
+            floor={role === "player1" ? p1Floor : p2Floor}
+            onAttempt={attemptDoor}
+            busy={!!result && result.includes("Signing")}
+          />
         </div>
+        {result && <div className="tf-hud-result">{result}</div>}
+        {lastTxHash && (
+          <div className="tf-hud-result tf-hud-result--line">
+            tx: <a href={explorerUrl(lastTxHash)} target="_blank" rel="noreferrer">{lastTxHash}</a>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -145,22 +160,5 @@ export function GameCanvas() {
     } catch {
       return null;
     }
-  }
-
-  async function runProofWorker(): Promise<{ proof: Buffer; publicInputs: Buffer }> {
-    return new Promise((resolve) => {
-      if (!workerRef.current) {
-        resolve({ proof: Buffer.alloc(0), publicInputs: Buffer.alloc(0) });
-        return;
-      }
-      workerRef.current.onmessage = (msg) => {
-        const { proof, publicInputs } = msg.data || {};
-        resolve({
-          proof: Buffer.from(proof || []),
-          publicInputs: Buffer.from(publicInputs || []),
-        });
-      };
-      workerRef.current.postMessage({ payload: { lobbyId, floor: p1Floor, nonce: attemptNonce + 1 } });
-    });
   }
 }

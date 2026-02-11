@@ -14,13 +14,13 @@ export function TheFarmLanding() {
             Two-player descent. Every rune choice is sealed on-chain; only the honest signal opens the door.
           </p>
           <div className="tf-cta-row">
-            <Link to="/the-farm/play" className="tf-button tf-button--primary">
+            <Link to="/play" className="tf-button tf-button--primary">
               ▶ PLAY NOW
             </Link>
-            <Link to="/the-farm/game" className="tf-button tf-button--ghost">
+            <Link to="/game" className="tf-button tf-button--ghost">
               🎞️ WATCH REVEAL
             </Link>
-            <Link to="/the-farm/tech" className="tf-button tf-button--line">
+            <Link to="/tech" className="tf-button tf-button--line">
               🧪 HOW ZK WORKS
             </Link>
           </div>
@@ -77,7 +77,7 @@ export function TheFarmLanding() {
           <div className="tf-status-row">
             <span className="tf-pill tf-pill--mint">LEDGER OK</span>
             <span className="tf-pill tf-pill--line">PING ~5s</span>
-            <Link to="/the-farm/status" className="tf-button tf-button--line">
+            <Link to="/status" className="tf-button tf-button--line">
               STATUS PAGE
             </Link>
           </div>
@@ -92,14 +92,14 @@ export function TheFarmLanding() {
             <li>Launcher preflight coming next</li>
             <li>ZK worker lane queued</li>
           </ul>
-          <Link to="/the-farm/devlog" className="tf-link">
+          <Link to="/devlog" className="tf-link">
             Open Devlog →
           </Link>
         </div>
         <div className="tf-footer-card">
           <p className="tf-footer-label">PRESS KIT</p>
           <p className="tf-panel__copy">Logos, screenshots, one-pager. Polished for judges + press.</p>
-          <Link to="/the-farm/press" className="tf-link">
+          <Link to="/press" className="tf-link">
             Download →
           </Link>
         </div>
