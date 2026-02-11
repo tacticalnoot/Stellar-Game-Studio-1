@@ -7,11 +7,15 @@ export type LobbyContextState = {
   role: LobbyRole | null;
   p1Floor: number;
   p2Floor: number;
+  p1Cleared1: boolean;
+  p1Cleared5: boolean;
+  p2Cleared1: boolean;
+  p2Cleared5: boolean;
   lastTxHash: string | null;
   attemptNonce: number;
   commitTxHash: string | null;
   setLobby: (id: string, role: LobbyRole) => void;
-  setFloors: (p1: number, p2: number) => void;
+  setFloors: (p1: number, p2: number, p1c1: boolean, p1c5: boolean, p2c1: boolean, p2c5: boolean) => void;
   setTxHash: (hash: string | null) => void;
   setCommitHash: (hash: string | null) => void;
   bumpNonce: () => void;
@@ -24,6 +28,10 @@ export function LobbyProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<LobbyRole | null>(null);
   const [p1Floor, setP1] = useState(0);
   const [p2Floor, setP2] = useState(0);
+  const [p1Cleared1, setP1C1] = useState(false);
+  const [p1Cleared5, setP1C5] = useState(false);
+  const [p2Cleared1, setP2C1] = useState(false);
+  const [p2Cleared5, setP2C5] = useState(false);
   const [lastTxHash, setLastTx] = useState<string | null>(null);
   const [attemptNonce, setAttemptNonce] = useState(0);
   const [commitTxHash, setCommitTx] = useState<string | null>(null);
@@ -32,9 +40,13 @@ export function LobbyProvider({ children }: { children: React.ReactNode }) {
     setLobbyId(id);
     setRole(r);
   };
-  const setFloors = (p1: number, p2: number) => {
+  const setFloors = (p1: number, p2: number, p1c1: boolean, p1c5: boolean, p2c1: boolean, p2c5: boolean) => {
     setP1(p1);
     setP2(p2);
+    setP1C1(p1c1);
+    setP1C5(p1c5);
+    setP2C1(p2c1);
+    setP2C5(p2c5);
   };
   const setTxHash = (hash: string | null) => setLastTx(hash);
   const setCommitHash = (hash: string | null) => setCommitTx(hash);
@@ -47,6 +59,10 @@ export function LobbyProvider({ children }: { children: React.ReactNode }) {
         role,
         p1Floor,
         p2Floor,
+        p1Cleared1,
+        p1Cleared5,
+        p2Cleared1,
+        p2Cleared5,
         lastTxHash,
         attemptNonce,
         commitTxHash,

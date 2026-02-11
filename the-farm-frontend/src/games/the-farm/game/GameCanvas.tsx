@@ -22,20 +22,24 @@ export function GameCanvas() {
   const [locked, setLocked] = useState(false);
   const [p1Floor, setP1Floor] = useState(1);
   const [p2Floor, setP2Floor] = useState(1);
+  const [p1Gates, setP1Gates] = useState({ g1: false, g5: false });
+  const [p2Gates, setP2Gates] = useState({ g1: false, g5: false });
   const [attempts, setAttempts] = useState(0);
   const [result, setResult] = useState<string | null>(null);
   const [lastTxHash, setTxHash] = useState<string | null>(null);
   const [attemptError, setAttemptError] = useState<string | null>(null);
   const [attemptNonce, setAttemptNonce] = useState(0);
-  const [isPolling, setIsPolling] = useState(false);
 
-  const setFloors = (p1: number, p2: number) => {
+  const setFloors = (p1: number, p2: number, p1s: any, p2s: any) => {
     setP1Floor(p1);
     setP2Floor(p2);
+    setP1Gates({ g1: p1s.cleared_gate1, g5: p1s.cleared_gate5 });
+    setP2Gates({ g1: p2s.cleared_gate1, g5: p2s.cleared_gate5 });
   };
 
   const bumpNonce = () => setAttemptNonce((n) => n + 1);
 
+  // ... (useEffect for scene init remains)
   useEffect(() => {
     const el = canvasRef.current;
     if (!el) return;
@@ -59,7 +63,7 @@ export function GameCanvas() {
       fetchLobby(id)
         .then((l) => {
           if (l) {
-            setFloors(l.p1.floor, l.p2.floor);
+            setFloors(l.p1.floor, l.p2.floor, l.p1, l.p2);
             // If we are P1, check if our floor advanced
             if (role === "player1" && l.p1.floor > p1Floor) {
               setResult(null); // Clear previous result
@@ -72,7 +76,19 @@ export function GameCanvas() {
         .catch(() => { });
     }, 2000);
     return () => clearInterval(timer);
-  }, [lobbyId, role, p1Floor, p2Floor, setFloors]);
+  }, [lobbyId, role, p1Floor, p2Floor]);
+
+  const isWaitingAtGate = () => {
+    if (role === 'player1') {
+      if (p1Floor === 1 && p1Gates.g1 && p2Floor === 1) return true;
+      if (p1Floor === 5 && p1Gates.g5 && p2Floor === 5) return true;
+    }
+    if (role === 'player2') {
+      if (p2Floor === 1 && p2Gates.g1 && p1Floor === 1) return true;
+      if (p2Floor === 5 && p2Gates.g5 && p1Floor === 5) return true;
+    }
+    return false;
+  };
 
   const requestLock = () => {
     const el = canvasRef.current;
@@ -138,11 +154,19 @@ export function GameCanvas() {
         </div>
 
         <div className="tf-overlay-content">
-          <FloorPrompt
-            floor={role === "player1" ? p1Floor : p2Floor}
-            onAttempt={attemptDoor}
-            busy={!!result && result.includes("Signing")}
-          />
+          {isWaitingAtGate() ? (
+            <div className="tf-gate-lock">
+              <h2>GATE LOCKED</h2>
+              <p>Waiting for partner to clear verification...</p>
+              <div className="tf-spinner"></div>
+            </div>
+          ) : (
+            <FloorPrompt
+              floor={role === "player1" ? p1Floor : p2Floor}
+              onAttempt={attemptDoor}
+              busy={!!result && result.includes("Signing")}
+            />
+          )}
         </div>
         {result && <div className="tf-hud-result">{result}</div>}
         {lastTxHash && (
