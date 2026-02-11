@@ -29,6 +29,9 @@ export function GameCanvas() {
   const [lastTxHash, setTxHash] = useState<string | null>(null);
   const [attemptError, setAttemptError] = useState<string | null>(null);
   const [attemptNonce, setAttemptNonce] = useState(0);
+  const [showHelp, setShowHelp] = useState(false);
+
+  const toggleHelp = () => setShowHelp(h => !h);
 
   const setFloors = (p1: number, p2: number, p1s: any, p2s: any) => {
     setP1Floor(p1);
@@ -147,11 +150,30 @@ export function GameCanvas() {
             </div>
           </div>
           <div className="tf-hud-right">
+            <button className="tf-hud-chip tf-hud-chip--btn" onClick={toggleHelp}>
+              {showHelp ? "Close Help" : "How to Play"}
+            </button>
             <div className="tf-hud-chip tf-hud-chip--line">Lobby: {lobbyId || "unset"}</div>
             <div className="tf-hud-chip tf-hud-chip--line">Role: {role || "?"}</div>
             <div className="tf-hud-chip tf-hud-chip--line">Pointer lock: {locked ? "ON" : "Click to lock"}</div>
           </div>
         </div>
+
+        {showHelp && (
+          <div className="tf-overlay-backdrop" onClick={toggleHelp}>
+            <div className="tf-help-modal" onClick={e => e.stopPropagation()}>
+              <h2>How to Play</h2>
+              <ul>
+                <li><strong>Objective:</strong> Ascend to Floor 10.</li>
+                <li><strong>Co-op:</strong> You share a lobby with a partner.</li>
+                <li><strong>Gates:</strong> On Floors 1 and 5, BOTH players must clear the challenge before ANYONE can advance.</li>
+                <li><strong>Choices:</strong> Read the prompt. Select the answer that matches the Lore.</li>
+                <li><strong>Technology:</strong> Every move generates a Zero-Knowledge proof (simulated on testnet) and verifies on-chain.</li>
+              </ul>
+              <button className="tf-button tf-button--primary" onClick={toggleHelp}>Got it</button>
+            </div>
+          </div>
+        )}
 
         <div className="tf-overlay-content">
           {isWaitingAtGate() ? (

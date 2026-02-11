@@ -232,3 +232,64 @@
 .tf-option-text {
     font-size: 14px;
 }
+
+.tf-hud-chip--btn {
+    cursor: pointer;
+    background: rgba(122, 255, 207, 0.1);
+    color: #7affcf;
+    border: 1px solid rgba(122, 255, 207, 0.3);
+    transition: all 0.2s;
+}
+
+.tf-hud-chip--btn:hover {
+    background: rgba(122, 255, 207, 0.2);
+    box-shadow: 0 0 10px rgba(122, 255, 207, 0.2);
+}
+
+.tf-overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    pointer-events: auto;
+}
+
+.tf-help-modal {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    color: #c9d1d9;
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+}
+
+.tf-help-modal h2 {
+    margin-top: 0;
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 12px;
+}
+
+.tf-help-modal ul {
+    padding-left: 20px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.tf-help-modal li {
+    margin-bottom: 12px;
+}
+
+.tf-help-modal strong {
+    color: #7affcf;
+}
