@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { StudioShell } from "./StudioShell";
 import { config } from "../../../config";
 import { useLobbyContext } from "../game/LobbyContext";
@@ -45,8 +46,8 @@ export function TheFarmLobby() {
                 chainLobby.status.tag === "Active"
                   ? "active"
                   : chainLobby.status.tag === "Finished"
-                  ? "finished"
-                  : "waiting",
+                    ? "finished"
+                    : "waiting",
               player1: chainLobby.player1,
               player2: chainLobby.player2 ?? undefined,
               p1Floor: chainLobby.p1.floor,
@@ -54,11 +55,19 @@ export function TheFarmLobby() {
               createdAt: Date.now(),
             });
           })
-          .catch(() => {});
+          .catch(() => { });
       }
     }, 1500);
     return () => clearInterval(interval);
   }, []);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (lobby?.status === "active") {
+      navigate("/game");
+    }
+  }, [lobby?.status, navigate]);
 
   const handleCreate = async () => {
     const signer = getSigner();
@@ -66,10 +75,10 @@ export function TheFarmLobby() {
       setError("Connect dev wallet to create a lobby.");
       return;
     }
-    const newLobby = {
+    const newLobby: LobbySnapshot = {
       lobbyId: generatedLobby,
       status: "waiting",
-      player1: "P1-connected",
+      player1: publicKey,
       player2: undefined,
       p1Floor: 1,
       p2Floor: 0,
@@ -92,11 +101,11 @@ export function TheFarmLobby() {
       setError("Connect wallet before joining.");
       return;
     }
-    const joined = {
+    const joined: LobbySnapshot = {
       lobbyId: joiningCode.trim(),
       status: "waiting",
-      player1: "Host",
-      player2: "You",
+      player1: "Player 1",
+      player2: publicKey,
       p1Floor: 1,
       p2Floor: 1,
       createdAt: Date.now(),
@@ -106,6 +115,8 @@ export function TheFarmLobby() {
     try {
       const res = await apiJoinLobby(Number(joiningCode.replace("L", "")), publicKey, signer);
       setTxHash(res.hash);
+      // Optimistically set active if we just joined? 
+      // Actually better to wait for chain poll or success.
     } catch (e: any) {
       setError(e?.message || "Join lobby failed");
     }
